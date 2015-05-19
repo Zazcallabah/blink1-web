@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Blink(1)</title>
+	<script type="text/javascript" src="raphael.js" charset="utf-8"></script>
+	<script type="text/javascript" src="colorpicker.js" charset="utf-8"></script>
+
+	<script type="text/javascript">
+	function go(str)
+	{
+		var xmlhttp = new XMLHttpRequest();
+
+		xmlhttp.onreadystatechange = function() {
+			if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+				 document.getElementById("result").innerHTML = xmlhttp.responseText;
+			}
+		}
+		
+		xmlhttp.open("POST", "/api", true);
+		xmlhttp.send( str || document.getElementById("cmd").value);
+		return false;
+	}
+
+	window.onload = function() {
+	
+		var latestreq = 0;
+		function deflood(){
+			var thisreq = Date.now();
+			if( thisreq - latestreq < 100 )
+				return false;
+			latestreq = thisreq;
+			return true;
+		}
+		
+		if( window.location.search.length > 1 )
+			go( decodeURI( window.location.search.substring(1) ) );
+
+		Raphael.colorpicker( document.getElementById("l1")).onchange = function (clr) {
+			if( deflood() )
+				go( "-l 1 -m 1 --rgb=" + clr );
+		};
+		
+		Raphael.colorpicker( document.getElementById("l2")).onchange = function (clr) {
+			if( deflood() )
+				go( "-l 2 -m 1 --rgb=" + clr );
+		};
+	};
+	</script>
+</head>
+
+<body style="margin-top: 350px">
+
+	<form onsubmit="return go()">
+		<input id="cmd" />
+		<input type="submit" value="Go">
+	</form>
+
+	<pre id="result"></pre>
+
+	<div id="l1" style="width:300px; height:300px; position:absolute; top:0; left:0;"></div>
+	<div id="l2" style="width:300px; height:300px; position:absolute; top:0; right:0;"></div>
+
+	</body>
+</html>
