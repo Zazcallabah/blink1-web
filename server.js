@@ -42,9 +42,44 @@ var requesthandler = function( request, response ) {
 					});
 				}
 		return;
-		});
+		});    
+	}
+	else if(pathname === "/api" && request.method == 'GET')
+	{
+		exec("blink1-tool -l 1 --rgbread", function(er,out,err){
+			if( er )
+			{
+				response.writeHead(500);
+				response.write( er + err + "\n");
+				response.end();
+				return;
+			}
 
-    
+			exec("blink1-tool -l 2 --rgbread", function(er2,out2,err2){
+				if( er2 )
+				{
+					response.writeHead(500);
+					response.write( er2 + err2 + "\n");
+					response.end();
+					return;
+				}
+				
+				if( out.length !== 34 || out2.length !== 34 )
+				{
+					response.writeHead(500);
+					response.write( "wrong string length: "+out+","+out2+"\n");
+					response.end();
+					return;
+				}
+				console
+				var l1 = out.substring(21,23) + out.substring(26,28) + out.substring(31,33);
+				var l2 = out2.substring(21,23) + out2.substring(26,28) + out2.substring(31,33);
+
+				response.writeHead(200);
+				response.write( l1 + " " + l2 );
+				response.end();
+			});
+		});
 	}
 	else if( pathname === "/index.html" || pathname === "/" || pathname === "" ) {
 			fs.readFile("/home/pi/node/index.html", "binary", function(err, file) {
