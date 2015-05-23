@@ -1,10 +1,13 @@
-// web server paste
+
 var port = 19333;
 var http = require("http"),
     url = require("url"),
-    fs = require("fs");
-var sys = require('sys');
-var exec = require('child_process').exec;
+    fs = require("fs"),
+	sys = require('sys'),
+	Blink1 = require('node-blink1');
+
+var blink = new Blink1();
+
 var requesthandler = function( request, response ) {
 
 	var pathname = url.parse( request.url ).pathname;
@@ -22,61 +25,37 @@ var requesthandler = function( request, response ) {
 		});
 
 		request.on('end', function() {
-		console.log(queryData);
-				var accept = /^[a-zA-Z0-9,\-=#" ]+$/
-				if( queryData.match(accept))
-				{
+			var instruction = JSON.parse( queryData );
+			var ledn = instruction.ledn || 0;
+			var time = instruction.time || 0;
+			var hexcolor = instruction.color || "#000000";
+			//check hexcolor valid data
+			var r = parseInt(hexcolor.substr(1,2),16);
+			var g = parseInt(hexcolor.substr(3,2),16);
+			var b = parseInt(hexcolor.substr(5,2),16);
+			
+			blink.fadeToRGB( time, r, g, b, ledn );
 
-					exec("blink1-tool "+queryData, function(er,out,err){
-					console.log(out);
-						if( er )
-						{
-							response.writeHead(500);
-							response.write( er + "\n");
-						}
-						else
-							response.writeHead(200);
-						response.write( out+ "\n" );
-						response.write( err + "\n");
-						response.end();
-					});
-				}
-		return;
+			response.writeHead(200);
+			response.write( "set led "+ledn+" to "+hexcolor+ " over "+time+"ms");
+			response.end();
 		});    
 	}
 	else if(pathname === "/api" && request.method == 'GET')
 	{
-		exec("blink1-tool -l 1 --rgbread", function(er,out,err){
-			if( er )
-			{
-				response.writeHead(500);
-				response.write( er + err + "\n");
-				response.end();
-				return;
-			}
-
-			exec("blink1-tool -l 2 --rgbread", function(er2,out2,err2){
-				if( er2 )
-				{
-					response.writeHead(500);
-					response.write( er2 + err2 + "\n");
-					response.end();
-					return;
-				}
-				
-				if( out.length !== 34 || out2.length !== 34 )
-				{
-					response.writeHead(500);
-					response.write( "wrong string length: "+out+","+out2+"\n");
-					response.end();
-					return;
-				}
-				console
-				var l1 = out.substring(21,23) + out.substring(26,28) + out.substring(31,33);
-				var l2 = out2.substring(21,23) + out2.substring(26,28) + out2.substring(31,33);
+		blink.readCurrentColor( 1, function(c1){
+			blink.readCurrentColor( 2, function(c2)(
+				var l1 = "#" + 
+					c1.r.toString(16) + 
+					c1.g.toString(16) + 
+					c1.b.toString(16);
+				var l2 = "#" + 
+					c2.r.toString(16) + 
+					c2.g.toString(16) + 
+					c2.b.toString(16);
 
 				response.writeHead(200);
-				response.write( l1 + " " + l2 );
+				response.write( JSON.stringify( {ledA:l1,ledB:l2} ) );
 				response.end();
 			});
 		});
