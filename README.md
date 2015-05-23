@@ -46,6 +46,7 @@ If you can open a node shell and can require('node-hid') without error, then you
 * Show current color
 * Support multiple blink1 devices
 * Support different firmwares?
+* enter command from url
 
 ## Known issues
 

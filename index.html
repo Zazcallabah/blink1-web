@@ -97,17 +97,18 @@
 	
 
 	var updateCurrent = function(){
-		if( window.location.hash === "#debug" ) {
-			return;
-		}
-		
-		
+		api.getCurrentColor( function(l){
+			document.getElementById("l1").style.borderColor = l.ledA;
+			document.getElementById("l2").style.borderColor = l.ledB;
+		});
 	};
 
 	window.onload = function() {
+		/*
+		TODO fix some sort of param for this part
 		if( window.location.search.length > 1 )
 			go( decodeURI( window.location.search.substring(1) ) );
-		
+		*/
 		var p1 = new Pick( "l1", 1, api );
 		var p2 = new Pick( "l2", 2, api );
 	};
@@ -132,11 +133,15 @@
 		<button onclick="setColor('magenta')" style="color:magenta">Magenta</button>
 		<button onclick="setColor('yellow')" class="outline" style="color:yellow">Yellow</button>
 	</p>
-
+	
+	<p>
+		<button onclick="updateCurrent()">Update</button>
+	</p>
+	
 	<pre style="clear:both" id="result"></pre>
 
 	<div id="l1" style="width:300px; height:300px; position:absolute; top:0; left:0; border-bottom: 5px solid white"></div>
-	<div id="l2" style="width:300px; height:300px; position:absolute; top:0; right:0; border-bottom: 5px solid white"></div>
+	<div id="l2" style="width:300px; height:300px; position:absolute; top:0; left:310px; border-bottom: 5px solid white"></div>
 
 	</body>
 </html>
