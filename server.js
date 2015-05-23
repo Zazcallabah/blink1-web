@@ -44,7 +44,7 @@ var requesthandler = function( request, response ) {
 	else if(pathname === "/api" && request.method == 'GET')
 	{
 		blink.readCurrentColor( 1, function(c1){
-			blink.readCurrentColor( 2, function(c2)(
+			blink.readCurrentColor( 2, function(c2){
 				var l1 = "#" + 
 					c1.r.toString(16) + 
 					c1.g.toString(16) + 
@@ -61,7 +61,7 @@ var requesthandler = function( request, response ) {
 		});
 	}
 	else if( pathname === "/index.html" || pathname === "/" || pathname === "" ) {
-			fs.readFile("/home/pi/node/index.html", "binary", function(err, file) {
+			fs.readFile("./index.html", "binary", function(err, file) {
 				if(err) {        
 					console.log("500: "+pathname);
 					response.writeHead(500, {"Content-Type": "text/plain"});
@@ -76,7 +76,7 @@ var requesthandler = function( request, response ) {
 			});		
 	}
 	else if( pathname === "/colorpicker.js" || pathname === "/raphael.js" ) {
-			fs.readFile("/home/pi/node"+pathname, "binary", function(err, file) {
+			fs.readFile("."+pathname, "binary", function(err, file) {
 				if(err) {        
 					console.log("500: "+pathname);
 					response.writeHead(500, {"Content-Type": "text/plain"});
