@@ -43,16 +43,22 @@ var requesthandler = function( request, response ) {
 	}
 	else if(pathname === "/api" && request.method == 'GET')
 	{
+		var hexconvert = function(num){
+			var res = num.toString(16);
+			if( num <= 0xf )
+				return "0"+res;
+			return res;
+		};
 		blink.readCurrentColor( 1, function(c1){
 			blink.readCurrentColor( 2, function(c2){
 				var l1 = "#" + 
-					c1.r.toString(16) + 
-					c1.g.toString(16) + 
-					c1.b.toString(16);
+					hexconvert(c1.r) + 
+					hexconvert(c1.g) + 
+					hexconvert(c1.b);
 				var l2 = "#" + 
-					c2.r.toString(16) + 
-					c2.g.toString(16) + 
-					c2.b.toString(16);
+					hexconvert(c2.r) + 
+					hexconvert(c2.g) + 
+					hexconvert(c2.b);
 
 				response.writeHead(200);
 				response.write( JSON.stringify( {ledA:l1,ledB:l2} ) );
