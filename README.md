@@ -82,7 +82,7 @@ blink1 specific instructions
 
     wget https://raw.githubusercontent.com/todbot/blink1/master/linux/51-blink1.rules
     sudo cp 51-blink1.rules /etc/udev/rules.d/
-   bsudo udevadm control --reload-rules
+    sudo udevadm control --reload-rules
 
 reboot is needed to fix node version mismatch
 
