@@ -21,9 +21,9 @@ Node-hosted web interface for blink1 that uses node-blink1 and node-hid to commu
 
 If you can open a node shell and can require('node-hid') without error, then you can proceed.
 
-* fetch node-blink1, preferably a version that supports mk2 with firmware 204
+* We need node-blink1, preferably a version that supports mk2 with firmware 204
 
-	wget https://raw.githubusercontent.com/Zazcallabah/node-blink1/master/blink1.js
+	npm install "git+https://github.com/Zazcallabah/node-blink1.git"
 
 * now you can start the server and browse to the webpage
 
@@ -47,6 +47,7 @@ If you can open a node shell and can require('node-hid') without error, then you
 * Support multiple blink1 devices
 * Support different firmwares?
 * enter command from url
+* make real npm module
 
 ## Known issues
 
