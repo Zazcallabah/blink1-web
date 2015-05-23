@@ -19,32 +19,39 @@
 	</style>
 
 	<script type="text/javascript">
-	function go(str)
-	{
-		if( window.location.hash === "#debug" ) {
-			document.getElementById("result").innerHTML = "DEBUG SENT: "+str;
-			return false;
-		}
-		
-		var xmlhttp = new XMLHttpRequest();
-		xmlhttp.onreadystatechange = function() {
-			if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
-				 document.getElementById("result").innerHTML = xmlhttp.responseText;
+	function Api(){
+		// callback param: {ledA:"#000000",ledB:"#000000"}
+		this.getCurrentColor = function(callback){ 
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function() {
+				if (xmlhttp.readyState == XMLHttpRequest.DONE )
+					callback( JSON.parse(xmlhttp.responseText) );
 			}
-		}		
-		xmlhttp.open("POST", "/api", true);
-		xmlhttp.send( str || document.getElementById("cmd").value);
-		return false;
-	}
+			xmlhttp.open("GET", "/api", true);
+			xmlhttp.send( "" );
+		};
+		
+		// ledn = {0,1,2}, time in ms, color is hexcolor
+		this.fadeToColor = function(ledn,time,color){
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function() {
+				if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+					document.getElementById("result").innerHTML = xmlhttp.responseText;
+				}
+			}
+			xmlhttp.open("POST", "/api", true);
+			xmlhttp.send( JSON.stringify({ledn: ledn, time: time, color: color}) );
+		};
+	};
 	
-	function Pick( id, index )
+	function Pick( id, index, api )
 	{
 		var that = this;
 		this.colorPicker = Raphael.colorpicker( document.getElementById(id) );
 		var buffering = false;
 		this.latestColor = "";
 		var send = function() {
-			go( "-l "+index+" -m 1 --rgb=" + that.latestColor );
+			api.fadeToColor( index, 1 , that.latestColor );
 			buffering = false;
 		};
 		this.colorPicker.onchange = function (clr) {
@@ -58,57 +65,57 @@
 		};
 	}
 	
+	var api = new Api();
+	
 	function setColor( c ) {
 		var selected = document.ledchoice.led.value;
-		var l = "";
+		var l = 0;
 		if( selected === "led1" )
-			l = "-l 1 ";
+			l = 1;
 		else if( selected === "led2" )
-			l = "-l 2 ";
-		
-		go(l+c);
+			l = 2;
+		var color = c;
+		if( c === "red" )
+			color = "#FF0000";
+		else if( c === "green" )
+			color = "#00FF00";
+		else if( c === "blue" )
+			color = "#0000FF";
+		else if( c === "cyan" )
+			color = "#00FFFF";
+		else if( c === "magenta" )
+			color = "#FF00FF";
+		else if( c === "yellow" )
+			color = "#FFFF00";
+		else if( c === "off" )
+			color = "#000000";
+		else if( c === "on" )
+			color = "#FFFFFF";
+
+		api.fadeToColor( l, 1, color );
 	}
 	
-	var readColor( str ){
-		var c1 = str.substring(0,6);
-		var c2 = str.substring(7,14);
-		document.getElementById("l1").style.borderColor = "#"+c1
-		document.getElementById("l2").style.borderColor = "#"+c2
-	};
-	
+
 	var updateCurrent = function(){
 		if( window.location.hash === "#debug" ) {
 			return;
 		}
 		
-		var xmlhttp = new XMLHttpRequest();
-		xmlhttp.onreadystatechange = function() {
-			if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
-				readColor( xmlhttp.responseText );
-				window.setTimeout( updateCurrent, 1000 );
-			}
-		}		
-		xmlhttp.open("GET", "/api", true);
-		xmlhttp.send( "" );
+		
 	};
 
 	window.onload = function() {
 		if( window.location.search.length > 1 )
 			go( decodeURI( window.location.search.substring(1) ) );
 		
-		var p1 = new Pick( "l1", 1 );
-		var p2 = new Pick( "l2", 2 );
+		var p1 = new Pick( "l1", 1, api );
+		var p2 = new Pick( "l2", 2, api );
 	};
 	</script>
 </head>
 
 <body style="margin-top: 350px">
 
-	<form onsubmit="return go()">
-		<input id="cmd" />
-		<input type="submit" value="Go">
-	</form>
-	
 	<form name="ledchoice" style="float:left; margin:1em">
 		<input type="radio" name="led" value="both" id="ledchoiceboth" checked="checked" /> <label for="ledchoiceboth">Both</label><br/>
 		<input type="radio" name="led" value="led1" id="ledchoice1" /> <label for="ledchoice1">Side A</label><br/>
