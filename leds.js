@@ -13,7 +13,7 @@ returns ack
 
 */
 
-var Leds = function(blink)
+function Leds(blink)
 {
 	this.blink = blink;
 	this.href = "/api/leds";

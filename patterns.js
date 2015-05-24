@@ -14,7 +14,7 @@ returns ack
 
 */
 
-var Patterns = function(blink)
+function Patterns(blink)
 {
 	this.blink = blink;
 	this.href = "/api/patterns";
