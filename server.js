@@ -4,16 +4,26 @@ var http = require("http"),
     url = require("url"),
     fs = require("fs"),
 	sys = require('sys'),
-	Blink1 = require('node-blink1');
+	Blink1 = require('node-blink1'),
+	Leds = require('./leds.js'),
+	Patterns = require('./patterns.js');
 
 var blink = new Blink1();
+var leds = new Leds(blink);
+var patterns = new Patterns(blink);
 
-var requesthandler = function( request, response ) {
+var hexconvert = function(num){
+	var res = num.toString(16);
+	if( num <= 0xf )
+		return "0"+res;
+	return res;
+};
 
-	var pathname = url.parse( request.url ).pathname;
-
-	if(pathname === "/api" && request.method == 'POST')
-	{
+var splitVerb = function(request,response,get,post) {
+	if( request.method === 'GET' ) {
+		get(response);
+	}
+	else if( request.method === 'POST' ) {
 		var queryData = "";
 		request.on('data', function(data) {
 			queryData += data;
@@ -25,76 +35,108 @@ var requesthandler = function( request, response ) {
 		});
 
 		request.on('end', function() {
-			var instruction = JSON.parse( queryData );
-			var ledn = instruction.ledn || 0;
-			var time = instruction.time || 0;
-			var hexcolor = instruction.color || "#000000";
-			//check hexcolor valid data
-			var r = parseInt(hexcolor.substr(1,2),16);
-			var g = parseInt(hexcolor.substr(3,2),16);
-			var b = parseInt(hexcolor.substr(5,2),16);
-			
-			blink.fadeToRGB( time, r, g, b, ledn );
-
-			response.writeHead(200);
-			response.write( "set led "+ledn+" to "+hexcolor+ " over "+time+"ms");
-			response.end();
-		});    
-	}
-	else if(pathname === "/api" && request.method == 'GET')
-	{
-		var hexconvert = function(num){
-			var res = num.toString(16);
-			if( num <= 0xf )
-				return "0"+res;
-			return res;
-		};
-		blink.readCurrentColor( 1, function(c1){
-			blink.readCurrentColor( 2, function(c2){
-				var l1 = "#" + 
-					hexconvert(c1.r) + 
-					hexconvert(c1.g) + 
-					hexconvert(c1.b);
-				var l2 = "#" + 
-					hexconvert(c2.r) + 
-					hexconvert(c2.g) + 
-					hexconvert(c2.b);
-
-				response.writeHead(200);
-				response.write( JSON.stringify( {ledA:l1,ledB:l2} ) );
-				response.end();
-			});
+			var postData = JSON.parse( queryData );
+			post(postData,response);
 		});
 	}
+};
+
+
+
+/*
+* GET /api/status
+* 
+* returns { playing: [0/1], start:[0-31], end:[0-31], count: 0, position: 0-31 }
+*/
+var getStatus = function(req,response){
+	blink.readPlayState(function(s){
+		response.writeHead(200);
+		response.write( JSON.stringify( {
+			playing: s.playing,
+			start: s.playstart,
+			end: s.playend,
+			count: s.playcount,
+			position: s.playpos
+		} ) );
+		response.end();
+	});
+};
+
+/*
+* GET /api/version
+* 
+* returns {version:"versionstring"}
+*/
+var getVersion = function(req,response){
+	blink.version(function(v){
+		response.writeHead(200);
+		response.write( JSON.stringify( {version:v} ) );
+		response.end();
+	});
+};
+
+var apiCallMap = {
+	"/api/leds": function(req,resp){ splitVerbs(req,resp,leds.get,leds.post); }, 
+	"/api/status": getStatus,
+	"/api/version": getVersion,
+	"/api/patterns": function(req,resp){ splitVerbs(req,resp,patterns.get,patterns.post); }
+};
+/*
+playloop from,to,playcount
+stoploop
+read color line
+set color line
+save to flash
+
+serverdown tickle?
+*/
+
+var requesthandler = function( request, response ) {
+
+	var pathname = url.parse( request.url ).pathname;
+	
+	if( pathname.length >= 4 && pathname.substr(0,4) === "/api" )
+	{
+		if( typeof (apiCallMap[pathname]) === 'function' )
+		{
+			apiCallMap[pathname](request,response);
+		}
+		else
+		{
+			response.writeHead(404, {"Content-Type": "text/plain"});
+			response.write("no endpoint available for path " + pathname );
+			response.end();
+		}
+	}
 	else if( pathname === "/index.html" || pathname === "/" || pathname === "" ) {
-			fs.readFile("./index.html", "binary", function(err, file) {
-				if(err) {        
-					console.log("500: "+pathname);
-					response.writeHead(500, {"Content-Type": "text/plain"});
-					response.write(err + "\n");
-					response.end();
-					return;
-				}
-				console.log("200: "+pathname);
-				response.writeHead(200);
-				response.write(file, "binary");
+		fs.readFile("./index.html", "binary", function(err, file) {
+			if(err) {        
+				console.log("500: "+pathname);
+				response.writeHead(500, {"Content-Type": "text/plain"});
+				response.write(err + "\n");
 				response.end();
-			});		
+				return;
+			}
+			console.log("200: "+pathname);
+			response.writeHead(200);
+			response.write(file, "binary");
+			response.end();
+		});		
 	}
 	else if( pathname === "/colorpicker.js" || pathname === "/raphael.js" ) {
-			fs.readFile("."+pathname, "binary", function(err, file) {
-				if(err) {        
-					console.log("500: "+pathname);
-					response.writeHead(500, {"Content-Type": "text/plain"});
-					response.write(err + "\n");
-					response.end();
-					return;
-				}
-				console.log("200: "+pathname);
-				response.writeHead(200);
-				response.write(file, "binary");
+		fs.readFile("."+pathname, "binary", function(err, file) {
+			if(err) {        
+				console.log("500: "+pathname);
+				response.writeHead(500, {"Content-Type": "text/plain"});
+				response.write(err + "\n");
 				response.end();
-			});		
+				return;
+			}
+			console.log("200: "+pathname);
+			response.writeHead(200);
+			response.write(file, "binary");
+			response.end();
+		});		
 	}
 	else
 	{
