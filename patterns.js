@@ -20,7 +20,7 @@ function Patterns(blink)
 	this.href = "/api/patterns";
 };
 
-Patterns.prototype.hexconvert = function(num){
+function hexconvert(num){
 	var res = num.toString(16);
 	if( num <= 0xf )
 		return "0"+res;
