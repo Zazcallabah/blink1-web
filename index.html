@@ -19,29 +19,56 @@
 	</style>
 
 	<script type="text/javascript">
-	function Api(){
-		// callback param: {ledA:"#000000",ledB:"#000000"}
-		this.getCurrentColor = function(callback){ 
-			var xmlhttp = new XMLHttpRequest();
+	function webreq(verb,href,callback,postdata) {
+		var xmlhttp = new XMLHttpRequest();
+		if( callback ) {
 			xmlhttp.onreadystatechange = function() {
 				if (xmlhttp.readyState == XMLHttpRequest.DONE )
-					callback( JSON.parse(xmlhttp.responseText) );
+					callback( xmlhttp.responseText );
 			}
-			xmlhttp.open("GET", "/api/leds", true);
-			xmlhttp.send( "" );
-		};
+		}
+		xmlhttp.open(verb, href, true);
 		
-		// ledn = {0,1,2}, time in ms, color is hexcolor
-		this.fadeToColor = function(ledn,time,color){
-			var xmlhttp = new XMLHttpRequest();
-			xmlhttp.onreadystatechange = function() {
-				if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
-					document.getElementById("result").innerHTML = xmlhttp.responseText;
-				}
+		xmlhttp.send( postdata ? JSON.stringify(postdata) : "" );
+	}
+	
+	function Api(){};
+		// callback param: {ledA:"#000000",ledB:"#000000"}
+	Api.prototype.getCurrentColor = function(callback) {
+		webreq(
+			"GET",
+			"/api/leds",
+			function(r){ callback(JSON.parse(r)); }
+		);
+	};
+	
+	// ledn = {0,1,2}, time in ms, color is hexcolor
+	Api.prototype.fadeToColor = function(ledn,time,color) {
+		webreq(
+			"POST",
+			"/api/leds",
+			function(r) {
+				document.getElementById("result").innerHTML = r;
+			},
+			{ledn: ledn, time: time, color: color}
+		);
+	};
+	
+	Api.prototype.readPatterns = function() {
+		webreq(
+			"GET",
+			"/api/patterns",
+			function(r) {
+				document.getElementById("result").innerHTML = r; //figure out how to present this
 			}
-			xmlhttp.open("POST", "/api/leds", true);
-			xmlhttp.send( JSON.stringify({ledn: ledn, time: time, color: color}) );
-		};
+		);
+	};
+	
+	Api.prototype.togl = function() {
+		webreq(
+			"POST",
+			"/api/control/togl"
+		);
 	};
 	
 	function Pick( id, index, api )
@@ -136,6 +163,8 @@
 	
 	<p>
 		<button onclick="updateCurrent()">Update</button>
+		<button onclick="api.togl()">Togl</button>
+		<button onclick="api.readPatterns()">Read patterns</button>
 	</p>
 	
 	<pre style="clear:both" id="result"></pre>
