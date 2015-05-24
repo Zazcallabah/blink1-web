@@ -27,8 +27,9 @@ Leds.prototype.hexconvert = function(num){
 };
 
 Leds.prototype.get = function(response){
-	this.blink.readCurrentColor( 1, function(c1){
-		this.blink.readCurrentColor( 2, function(c2){
+	var that = this;
+	that.blink.readCurrentColor( 1, function(c1){
+		that.blink.readCurrentColor( 2, function(c2){
 			var l1 = "#" + 
 				hexconvert(c1.r) + 
 				hexconvert(c1.g) + 
