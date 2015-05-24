@@ -76,10 +76,10 @@ var getVersion = function(req,response){
 };
 
 var apiCallMap = {
-	"/api/leds": function(req,resp){ splitVerbs(req,resp,leds.get,leds.post); }, 
+	"/api/leds": function(req,resp){ splitVerb(req,resp,leds.get,leds.post); }, 
 	"/api/status": getStatus,
 	"/api/version": getVersion,
-	"/api/patterns": function(req,resp){ splitVerbs(req,resp,patterns.get,patterns.post); }
+	"/api/patterns": function(req,resp){ splitVerb(req,resp,patterns.get,patterns.post); }
 };
 /*
 playloop from,to,playcount
