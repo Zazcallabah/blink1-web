@@ -1,16 +1,18 @@
 
 var port = 19333;
 var http = require("http"),
-    url = require("url"),
-    fs = require("fs"),
+	url = require("url"),
+	fs = require("fs"),
 	sys = require('sys'),
 	Blink1 = require('node-blink1'),
 	Leds = require('./leds.js'),
-	Patterns = require('./patterns.js');
+	Patterns = require('./patterns.js'),
+	Control = require('./control.js');
 
 var blink = new Blink1();
 var leds = new Leds(blink);
 var patterns = new Patterns(blink);
+var control = new Control(blink);
 
 var hexconvert = function(num){
 	var res = num.toString(16);
@@ -19,29 +21,39 @@ var hexconvert = function(num){
 	return res;
 };
 
+var parseRequest = function(request, callback){
+	var queryData = "";
+	request.on('data', function(data) {
+		queryData += data;
+		if(queryData.length > 1e4) {
+			queryData = "";
+			response.writeHead(413, {'Content-Type': 'text/plain'}).end();
+			request.connection.destroy();
+		}
+	});
+	request.on('end', function() {
+		callback( JSON.parse( queryData ) );
+	});
+};
+
 var splitVerb = function(request,response,controller) {
 	if( request.method === 'GET' ) {
 		controller.get(response);
 	}
 	else if( request.method === 'POST' ) {
-		var queryData = "";
-		request.on('data', function(data) {
-			queryData += data;
-			if(queryData.length > 1e4) {
-				queryData = "";
-				response.writeHead(413, {'Content-Type': 'text/plain'}).end();
-				request.connection.destroy();
-			}
-		});
-
-		request.on('end', function() {
-			var postData = JSON.parse( queryData );
-			controller.post(postData,response);
+		parseRequest( request, function(data){
+			controller.post(data,response);
 		});
 	}
 };
 
-
+var controlAction = function( request, response, action ) {
+	if( request.method === 'POST' ) {
+		parseRequest( request, function(p){
+			control[action](p,response);
+		});
+	}
+};
 
 /*
 * GET /api/status
@@ -50,7 +62,7 @@ var splitVerb = function(request,response,controller) {
 */
 var getStatus = function(req,response){
 	blink.readPlayState(function(s){
-		response.writeHead(200);
+	response.writeHead(200);
 		response.write( JSON.stringify( {
 			playing: s.playing,
 			start: s.playstart,
@@ -79,17 +91,11 @@ var apiCallMap = {
 	"/api/leds": function(req,resp){ splitVerb(req,resp,leds); }, 
 	"/api/status": getStatus,
 	"/api/version": getVersion,
-	"/api/patterns": function(req,resp){ splitVerb(req,resp,patterns); }
+	"/api/patterns": function(req,resp){ splitVerb(req,resp,patterns); },
+	"/api/control/togl": function(req,resp) { controlAction( req,resp,"togl"); },
+	"/api/control/play": function(req,resp) { controlAction( req,resp,"play"); },
+	"/api/control/pause": function(req,resp) { controlAction( req,resp,"pause"); },
 };
-/*
-playloop from,to,playcount
-stoploop
-read color line
-set color line
-save to flash
-
-serverdown tickle?
-*/
 
 var requesthandler = function( request, response ) {
 
