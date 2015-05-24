@@ -27,7 +27,7 @@
 				if (xmlhttp.readyState == XMLHttpRequest.DONE )
 					callback( JSON.parse(xmlhttp.responseText) );
 			}
-			xmlhttp.open("GET", "/api", true);
+			xmlhttp.open("GET", "/api/leds", true);
 			xmlhttp.send( "" );
 		};
 		
@@ -39,7 +39,7 @@
 					document.getElementById("result").innerHTML = xmlhttp.responseText;
 				}
 			}
-			xmlhttp.open("POST", "/api", true);
+			xmlhttp.open("POST", "/api/leds", true);
 			xmlhttp.send( JSON.stringify({ledn: ledn, time: time, color: color}) );
 		};
 	};
