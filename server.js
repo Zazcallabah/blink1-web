@@ -19,9 +19,9 @@ var hexconvert = function(num){
 	return res;
 };
 
-var splitVerb = function(request,response,get,post) {
+var splitVerb = function(request,response,controller) {
 	if( request.method === 'GET' ) {
-		get(response);
+		controller.get(response);
 	}
 	else if( request.method === 'POST' ) {
 		var queryData = "";
@@ -36,7 +36,7 @@ var splitVerb = function(request,response,get,post) {
 
 		request.on('end', function() {
 			var postData = JSON.parse( queryData );
-			post(postData,response);
+			controller.post(postData,response);
 		});
 	}
 };
@@ -76,10 +76,10 @@ var getVersion = function(req,response){
 };
 
 var apiCallMap = {
-	"/api/leds": function(req,resp){ splitVerb(req,resp,leds.get,leds.post); }, 
+	"/api/leds": function(req,resp){ splitVerb(req,resp,leds); }, 
 	"/api/status": getStatus,
 	"/api/version": getVersion,
-	"/api/patterns": function(req,resp){ splitVerb(req,resp,patterns.get,patterns.post); }
+	"/api/patterns": function(req,resp){ splitVerb(req,resp,patterns); }
 };
 /*
 playloop from,to,playcount
