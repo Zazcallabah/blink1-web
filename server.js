@@ -32,7 +32,10 @@ var parseRequest = function(request, callback){
 		}
 	});
 	request.on('end', function() {
-		callback( JSON.parse( queryData ) );
+		if( queryData === "" )
+			callback( queryData );
+		else
+			callback( JSON.parse( queryData ) );
 	});
 };
 
