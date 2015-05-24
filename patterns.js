@@ -82,4 +82,4 @@ Patterns.prototype.post = function( patterns, response ){
 };
 
 
-module.exports = Leds;
+module.exports = Patterns;
