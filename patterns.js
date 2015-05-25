@@ -74,7 +74,7 @@ Patterns.prototype.post = function( patterns, response ){
 		var b = parseInt(hexcolor.substr(5,2),16);
 
 		this.blink.setLed( ledn );
-		this.blink.writePatternLine(time,r,g,b,index);
+		this.blink.writePatternLine(time,r,g,b,index,true);
 	}
 	response.writeHead(200);
 	response.write( "" + patterns.length + "patterns written");

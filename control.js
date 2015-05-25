@@ -48,13 +48,13 @@ Control.prototype.togl = function( p, response ){
 	blnk.readCurrentColor( 1, function(l1){
 		blnk.readCurrentColor( 2, function(l2){
 			blnk.setLed(2);
-			blnk.writePatternLine( speed, l1.r, l1.g, l1.b, 28 );
+			blnk.writePatternLine( speed, l1.r, l1.g, l1.b, 28, true );
 			blnk.setLed(1);
-			blnk.writePatternLine( speed, l2.r, l2.g, l2.b, 29 );
+			blnk.writePatternLine( speed, l2.r, l2.g, l2.b, 29, true );
 			blnk.setLed(2);
-			blnk.writePatternLine( speed, l2.r, l2.g, l2.b, 30 );
+			blnk.writePatternLine( speed, l2.r, l2.g, l2.b, 30, true );
 			blnk.setLed(1);
-			blnk.writePatternLine( speed, l1.r, l1.g, l1.b, 31 );
+			blnk.writePatternLine( speed, l1.r, l1.g, l1.b, 31, true );
 			
 			blnk.playLoop(28,31,0);
 			response.writeHead(200);
