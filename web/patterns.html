@@ -12,19 +12,43 @@
 	<script type="text/javascript">
 	
 	var api = new Api();
+	var picker = undefined;
 	
 	function Pattern(source){
 		if( !source )
 			source ={};
-		this.color = ko.observable(source.color || "#000000");
+		this.r = ko.observable(0);
+		this.g = ko.observable(0);
+		this.b = ko.observable(0);
+		this.setColors( source.color || "#000000" );
 		this.ledn = ko.observable(source.ledn || 0);
 		this.time = ko.observable(source.time || 0);
 		this.index = ko.observable(source.index || 0);
 	};
 	
+	Pattern.prototype.grabColorFromPicker=function(){
+		this.setColors(picker.latestColor);
+	};
+	
+	Pattern.prototype.setColors = function(color){
+		this.r(parseInt(color.substr(1,2),16));
+		this.g(parseInt(color.substr(3,2),16));
+		this.b(parseInt(color.substr(5,2),16));
+	};
+	
+var hexconvert = function(num){
+	var res = num.toString(16);
+	if( num <= 0xf )
+		return "0"+res;
+	return res;
+};
+
 	Pattern.prototype.toObject = function(){
 		return {
-			color: this.color(),
+			color: "#" + 
+				hexconvert(this.r()) + 
+				hexconvert(this.g()) + 
+				hexconvert(this.b()),
 			ledn: this.ledn(),
 			time: this.time(),
 			index: this.index()
@@ -32,14 +56,19 @@
 	};
 	
 	var model = {
-		patterns: ko.observableArray()
+		patterns: ko.observableArray([])
 	};
 
 	window.onload = function() {
-		var p1 = Raphael.colorpicker( document.getElementById("colorpicker") );
-		api.readPatterns(function(p){
+		picker = new Pick( "colorpicker" );
+		for(var i=0;i<32;i++)
+		{
+			model.patterns.push(new Pattern({color:"#000000",ledn:0,time:0,index:i}));
+		}
+	/*	api.readPatterns(function(p){
 			model.patterns(p.map( function(ps){ return new Pattern(ps); } ) );
 		});
+		*/
 		ko.applyBindings(model);
 	};
 	</script>
@@ -47,8 +76,21 @@
 
 <body style="margin-top: 350px">
 
-<div data-bind="foreach: patterns">
-</div>
+<ul data-bind="foreach: patterns">
+	<li>
+		<button data-bind="click: grabColorFromPicker">Grab</button>
+		R: <input data-bind="value: r" style="width:100px"/>
+		G: <input data-bind="value: g" style="width:100px"/>
+		B: <input data-bind="value: b" style="width:100px"/>
+		<select data-bind="value: ledn" >
+			<option value="0">Both leds</option> 
+			<option value="1">Led A</option> 
+			<option value="2">Led B</option>
+		</select>
+		<input data-bind="value: time" style="width:100px"/> ms
+		<span data-bind="text: index"></span>
+	</li>
+</ul>
 
 	<div id="colorpicker" style="width:300px; height:300px; position:absolute; top:0; left:0"></div>
 
