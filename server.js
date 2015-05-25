@@ -127,7 +127,7 @@ var requesthandler = function( request, response ) {
 		var fileloc = "."+pathname;
 		if( fileloc === "./" || fileloc === "." )
 			fileloc = "./index.html";
-		fs.readFile("./index.html", "binary", function(err, file) {
+		fs.readFile(fileloc, "binary", function(err, file) {
 			if(err) {        
 				console.log("500: "+pathname);
 				response.writeHead(500, {"Content-Type": "text/plain"});
