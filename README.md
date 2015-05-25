@@ -12,7 +12,7 @@ Node-hosted web interface for blink1 that uses node-blink1 and node-hid to commu
 
 Clone this repo
 
-    git clone https://github.com/Zazcallabah/nodeblink.git
+    git clone https://github.com/Zazcallabah/blink1-web.git
     cd blink1-web
 
 We need node-hid, and it needs sudo for some reason
