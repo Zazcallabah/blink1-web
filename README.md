@@ -43,7 +43,6 @@ now you can start the server and browse to the webpage
 
 * Interface for getting, setting, and playing sequences.
 * Buttons for specific states. Maybe programmable? Ideas from the blinkcontrol program.
-* Show current color
 * Support multiple blink1 devices
 * Support different firmwares?
 * enter command from url

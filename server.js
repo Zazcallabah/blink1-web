@@ -90,6 +90,10 @@ var getVersion = function(req,response){
 	});
 };
 
+// missing api calls:
+// serverdown
+// persist to flash
+// setcolor w/o fade
 var apiCallMap = {
 	"/api/leds": function(req,resp){ splitVerb(req,resp,leds); }, 
 	"/api/status": getStatus,
@@ -117,23 +121,13 @@ var requesthandler = function( request, response ) {
 			response.end();
 		}
 	}
-	else if( pathname === "/index.html" || pathname === "/" || pathname === "" ) {
+	else if( pathname === "/index.html" || pathname === "/" ||pathname === "" ||
+		pathname === "/colorpicker.js" || pathname === "/raphael.js" ) {
+
+		var fileloc = "."+pathname;
+		if( fileloc === "./" || fileloc === "." )
+			fileloc = "./index.html";
 		fs.readFile("./index.html", "binary", function(err, file) {
-			if(err) {        
-				console.log("500: "+pathname);
-				response.writeHead(500, {"Content-Type": "text/plain"});
-				response.write(err + "\n");
-				response.end();
-				return;
-			}
-			console.log("200: "+pathname);
-			response.writeHead(200);
-			response.write(file, "binary");
-			response.end();
-		});		
-	}
-	else if( pathname === "/colorpicker.js" || pathname === "/raphael.js" ) {
-		fs.readFile("."+pathname, "binary", function(err, file) {
 			if(err) {        
 				console.log("500: "+pathname);
 				response.writeHead(500, {"Content-Type": "text/plain"});
