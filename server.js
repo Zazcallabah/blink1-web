@@ -5,9 +5,9 @@ var http = require("http"),
 	fs = require("fs"),
 	sys = require('sys'),
 	Blink1 = require('node-blink1'),
-	Leds = require('./leds.js'),
-	Patterns = require('./patterns.js'),
-	Control = require('./control.js');
+	Leds = require('./servercomponents/leds.js'),
+	Patterns = require('./servercomponents/patterns.js'),
+	Control = require('./servercomponents/control.js');
 
 var blink = new Blink1();
 var leds = new Leds(blink);
@@ -108,6 +108,18 @@ var requesthandler = function( request, response ) {
 
 	var pathname = url.parse( request.url ).pathname;
 	
+	if( pathname === '/' || pathname === '' )
+		pathname = '/index.html';
+	
+	var approvedFiles = [
+		'/raphael.js',
+		'/knockout.js',
+		'/colorpicker.js',
+		'/api.js',
+		'/index.html',
+		'/patterns.html'
+	];
+	
 	if( pathname.length >= 4 && pathname.substr(0,4) === "/api" )
 	{
 		if( typeof (apiCallMap[pathname]) === 'function' )
@@ -121,13 +133,9 @@ var requesthandler = function( request, response ) {
 			response.end();
 		}
 	}
-	else if( pathname === "/index.html" || pathname === "/" ||pathname === "" ||
-		pathname === "/colorpicker.js" || pathname === "/raphael.js" ) {
+	else if( approvedFiles.Filter( function(f){ return f === pathname } ).length > 0 ) {
 
-		var fileloc = "."+pathname;
-		if( fileloc === "./" || fileloc === "." )
-			fileloc = "./index.html";
-		fs.readFile(fileloc, "binary", function(err, file) {
+		fs.readFile('./web'+pathname, "binary", function(err, file) {
 			if(err) {        
 				console.log("500: "+pathname);
 				response.writeHead(500, {"Content-Type": "text/plain"});

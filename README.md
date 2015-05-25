@@ -47,6 +47,7 @@ now you can start the server and browse to the webpage
 * Support different firmwares?
 * enter command from url
 * make real npm module
+* error handle and resume if device is removed and readded
 
 ## Known issues
 

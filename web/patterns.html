@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Blink(1) - patterns</title>
+	<script type="text/javascript" src="raphael.js" charset="utf-8"></script>
+	<script type="text/javascript" src="colorpicker.js" charset="utf-8"></script>
+	<script type="text/javascript" src="knockout.js" charset="utf-8"></script>
+	<script type="text/javascript" src="api.js" charset="utf-8"></script>
+	<style type="text/css">
+	</style>
+
+	<script type="text/javascript">
+	
+	var api = new Api();
+	
+	function Pattern(source){
+		if( !source )
+			source ={};
+		this.color = ko.observable(source.color || "#000000");
+		this.ledn = ko.observable(source.ledn || 0);
+		this.time = ko.observable(source.time || 0);
+		this.index = ko.observable(source.index || 0);
+	};
+	
+	Pattern.prototype.toObject = function(){
+		return {
+			color: this.color(),
+			ledn: this.ledn(),
+			time: this.time(),
+			index: this.index()
+		};
+	};
+	
+	var model = {
+		patterns: ko.observableArray()
+	};
+
+	window.onload = function() {
+		var p1 = Raphael.colorpicker( document.getElementById("colorpicker") );
+		api.readPatterns(function(p){
+			model.patterns(p.map( function(ps){ return new Pattern(ps); } ) );
+		});
+		ko.applyBindings(model);
+	};
+	</script>
+</head>
+
+<body style="margin-top: 350px">
+
+<div data-bind="foreach: patterns">
+</div>
+
+	<div id="colorpicker" style="width:300px; height:300px; position:absolute; top:0; left:0"></div>
+
+</body>
+</html>
