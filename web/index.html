@@ -4,6 +4,7 @@
 	<title>Blink(1)</title>
 	<script type="text/javascript" src="raphael.js" charset="utf-8"></script>
 	<script type="text/javascript" src="colorpicker.js" charset="utf-8"></script>
+	<script type="text/javascript" src="api.js" charset="utf-8"></script>
 	<style type="text/css">
 		.outline {
 			text-shadow:
@@ -19,79 +20,6 @@
 	</style>
 
 	<script type="text/javascript">
-	function webreq(verb,href,callback,postdata) {
-		var xmlhttp = new XMLHttpRequest();
-		if( callback ) {
-			xmlhttp.onreadystatechange = function() {
-				if (xmlhttp.readyState == XMLHttpRequest.DONE )
-					callback( xmlhttp.responseText );
-			}
-		}
-		xmlhttp.open(verb, href, true);
-		
-		xmlhttp.send( postdata ? JSON.stringify(postdata) : "" );
-	}
-	
-	function Api(){};
-		// callback param: {ledA:"#000000",ledB:"#000000"}
-	Api.prototype.getCurrentColor = function(callback) {
-		webreq(
-			"GET",
-			"/api/leds",
-			function(r){ callback(JSON.parse(r)); }
-		);
-	};
-	
-	// ledn = {0,1,2}, time in ms, color is hexcolor
-	Api.prototype.fadeToColor = function(ledn,time,color) {
-		webreq(
-			"POST",
-			"/api/leds",
-			function(r) {
-				document.getElementById("result").innerHTML = r;
-			},
-			{ledn: ledn, time: time, color: color}
-		);
-	};
-	
-	Api.prototype.readPatterns = function() {
-		webreq(
-			"GET",
-			"/api/patterns",
-			function(r) {
-				document.getElementById("result").innerHTML = r; //figure out how to present this
-			}
-		);
-	};
-	
-	Api.prototype.togl = function() {
-		webreq(
-			"POST",
-			"/api/control/togl"
-		);
-	};
-	
-	function Pick( id, index, api )
-	{
-		var that = this;
-		this.colorPicker = Raphael.colorpicker( document.getElementById(id) );
-		var buffering = false;
-		this.latestColor = "";
-		var send = function() {
-			api.fadeToColor( index, 1 , that.latestColor );
-			buffering = false;
-		};
-		this.colorPicker.onchange = function (clr) {
-			that.latestColor = clr;
-			if( !buffering ) {
-				buffering = true;
-				// don't spam a web request for each event.
-				// instead we buffer for 100 ms and then send the latest value
-				window.setTimeout(send, 100);
-			}
-		};
-	}
-	
 	var api = new Api();
 	
 	function setColor( c ) {
@@ -136,8 +64,8 @@
 		if( window.location.search.length > 1 )
 			go( decodeURI( window.location.search.substring(1) ) );
 		*/
-		var p1 = new Pick( "l1", 1, api );
-		var p2 = new Pick( "l2", 2, api );
+		var p1 = new Pick( "l1", 1, function(c){ api.fadeToColor(1,1,c);} );
+		var p2 = new Pick( "l2", 2, function(c){ api.fadeToColor(2,1,c);} );
 	};
 	</script>
 </head>

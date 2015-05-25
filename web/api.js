@@ -49,14 +49,15 @@
 		);
 	};
 	
-	function Pick( id, index, api )
+	function Pick( id, onchange )
 	{
 		var that = this;
 		this.colorPicker = Raphael.colorpicker( document.getElementById(id) );
 		var buffering = false;
 		this.latestColor = "";
 		var send = function() {
-			api.fadeToColor( index, 1 , that.latestColor );
+			if( onchange )
+				onchange( that.latestColor );
 			buffering = false;
 		};
 		this.colorPicker.onchange = function (clr) {
