@@ -48,6 +48,21 @@
 		);
 	};
 	
+	Api.prototype.play = function(count){
+		webreq(
+			"POST",
+			"/api/control/play",
+			undefined,
+			{count:count||0}
+			);
+	};
+	Api.prototype.pause = function(){
+		webreq(
+			"POST",
+			"/api/control/pause"
+			);
+	};
+	
 	Api.prototype.togl = function() {
 		webreq(
 			"POST",

@@ -118,15 +118,24 @@ var hexconvert = function(num){
 	};
 	
 	model.save = function(){
-		//api.savePatterns(this.patterns().map( function(p){ p.toObject(); }););
+		api.savePatterns(this.patterns().map( function(p){ p.toObject(); }););
 	};
 	
 	model.load = function(){
-		/*api.readPatterns(function(p){
+		api.readPatterns(function(p){
 			for( var i=0;i<32;i++)
 				model.patterns()[i].setFrom(p[i]);
-			});*/
+			});
 	}
+	model.play = function(){
+		api.play(this.playtimes());
+	};
+	model.loop = function(){
+		api.play();
+	};
+	model.pause = function(){
+	api.pause();
+	};
 	
 	model.selected.subscribe(function(s){
 		var startindex = 32-s.lines.length;
@@ -158,12 +167,12 @@ var hexconvert = function(num){
 <body style="margin-top: 350px">
 
 <p>
-<button>loop</button> <button>stop</button> <br/>
-<button>play</button> <input data-bind="playtimes" /> times
+<button data-bind="click:loop">Loop</button> <button data-bind="click:pause">Stop</button> <br/>
+<button data-bind="click:play">Play</button> <input data-bind="playtimes" /> times
 </p>
 
 <p>
-<button data-bind="save">save</button> <button data-bind="load">refresh</button> | <button>persist</button> <button data-bind="click: resetDefault">Reset</button>
+<button data-bind="save">Save</button> <button data-bind="load">Refresh</button> | <button>persist</button> <button data-bind="click: resetDefault">Reset</button>
 </p>
 
 <p><select data-bind="value:selected, options:presets, optionsText:'name', optionsCaption: 'Presets'"></select> | With selected: <button data-bind="click: clear">Clear</button> <button onclick="pastestore.copy()">Copy</button> <button data-bind="click: settimes">set time to</button> <input data-bind="value: setTimeTo"/>
