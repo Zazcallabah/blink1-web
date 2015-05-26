@@ -14,6 +14,12 @@
 	</style>
 
 	<script type="text/javascript">
+var hexconvert = function(num){
+	var res = num.toString(16);
+	if( num <= 0xf )
+		return "0"+res;
+	return res;
+};
 	
 
 	
@@ -30,6 +36,11 @@
 		this.ledn = ko.observable(source.ledn || 0);
 		this.time = ko.observable(source.time || 0);
 		this.index = ko.observable(source.index || 0);
+		this.color = ko.computed(function(){
+			return "#"+hexconvert(this.r())
+			+hexconvert(this.g())
+			+hexconvert(this.b());
+		},this);
 	};
 	
 	Pattern.prototype.grabColorFromPicker=function(){
@@ -42,12 +53,6 @@
 		this.b(parseInt(color.substr(5,2),16));
 	};
 	
-var hexconvert = function(num){
-	var res = num.toString(16);
-	if( num <= 0xf )
-		return "0"+res;
-	return res;
-};
 
 	Pattern.prototype.toObject = function(){
 		return {
@@ -97,7 +102,7 @@ var hexconvert = function(num){
 <select data-bind="value:selected, options:presets, optionsText:'name', optionsCaption: 'Presets'"></select>
 <ol start="0" data-bind="foreach: patterns">
 	<li>
-		<button data-bind="click: grabColorFromPicker">Grab</button>
+		<button data-bind="click: grabColorFromPicker">Grab</button> <span data-bind="style:{background:color()}" style="width:10px">&nbsp;</span>
 		R: <input data-bind="value: r" />
 		G: <input data-bind="value: g" />
 		B: <input data-bind="value: b" />
