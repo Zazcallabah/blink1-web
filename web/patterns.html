@@ -11,6 +11,16 @@
 		input{
 			width: 40px
 		}
+		li{
+			margin: 5px;
+			padding: 5px;
+			border-style: dotted;
+			border-color: black;
+			border-width: 0 0 0 1px;
+		}
+		.persist{
+			border-style: solid
+		}
 	</style>
 
 	<script type="text/javascript">
@@ -21,10 +31,35 @@ var hexconvert = function(num){
 	return res;
 };
 	
+	function PasteStore(model){
+		this.model = model;
+		this.stored = [];
+	}
+	
+	PasteStore.prototype.copy(){
+		
+		model.canPaste(this.stored.length > 0);
+	};
+	
+	PasteStore.prototype.paste(index){
+		for( var i=0; i<stored.length && index+i < this.model.patterns().length; i++)
+		{
+			this.model.patterns()[index+i].setFrom(this.stored[i]);
+		}
+	};
 
 	
+	var model = {
+		patterns: ko.observableArray([]),
+		selected: ko.observable(),
+		presets: ko.observableArray(presets),
+		playtimes: ko.observable(0),
+		canPaste: ko.observable(false)
+	};
+
 	var api = new Api();
 	var picker = undefined;
+	var pastestore = new PasteStore(model);
 	
 	function Pattern(source){
 		if( !source )
@@ -36,12 +71,25 @@ var hexconvert = function(num){
 		this.ledn = ko.observable(source.ledn || 0);
 		this.time = ko.observable(source.time || 0);
 		this.index = ko.observable(source.index || 0);
+		this.selected = ko.observable(false);
 		this.color = ko.computed(function(){
 			return "#"+hexconvert(this.r())
 			+hexconvert(this.g())
 			+hexconvert(this.b());
 		},this);
 	};
+	
+	Pattern.prototype.reset = function(){
+		this.setFrom({r:0,g:0,b:0,ledn:0,time:0});
+	};
+	
+	Pattern.prototype.setFrom=function(source){
+		this.r(source.r);
+		this.g(source.g);
+		this.b(source.b);
+		this.ledn(source.ledn);
+		this.time(source.time);
+	}
 	
 	Pattern.prototype.grabColorFromPicker=function(){
 		this.setColors(picker.latestColor);
@@ -51,6 +99,10 @@ var hexconvert = function(num){
 		this.r(parseInt(color.substr(1,2),16));
 		this.g(parseInt(color.substr(3,2),16));
 		this.b(parseInt(color.substr(5,2),16));
+	};
+	
+	Pattern.prototype.paste=function(){
+		pastestore.paste(this.index());
 	};
 	
 
@@ -66,20 +118,15 @@ var hexconvert = function(num){
 		};
 	};
 	
-	var model = {
-		patterns: ko.observableArray([]),
-		selected: ko.observable(),
-		presets: ko.observableArray(presets)
-	};
 	
 	model.selected.subscribe(function(s){
 		var startindex = 32-s.lines.length;
-		for( var i = 0;i<s.lines.length; i++ )
+		for( var i = 0;i<32; i++ )
 		{
-			
-			model.patterns()[startindex+i].setColors( s.lines[i].color );
-			model.patterns()[startindex+i].ledn( s.lines[i].ledn );
-			model.patterns()[startindex+i].time( s.lines[i].time );
+			if( i >= s.lines.length )
+				model.patterns()[i].reset();
+			else
+				model.patterns()[i].setColors( s.lines[i].color );
 		}
 	});
 
@@ -99,10 +146,19 @@ var hexconvert = function(num){
 </head>
 
 <body style="margin-top: 350px">
-<select data-bind="value:selected, options:presets, optionsText:'name', optionsCaption: 'Presets'"></select>
-<ol start="0" data-bind="foreach: patterns">
-	<li>
-		<button data-bind="click: grabColorFromPicker">Grab</button> <span data-bind="style:{background:color()}" style="width:10px">&nbsp;</span>
+<p>
+<button>Loop</button> <button>Stop</button>
+<button>Play</button> <input data-bind="playtimes" /> times
+</p>
+
+<p>
+<button>Save</button> <button>Refresh</button> | <button>Persist</button> <button>Reset</button>
+</p>
+<p><select data-bind="value:selected, options:presets, optionsText:'name', optionsCaption: 'Presets'"></select> | With selected: <button>clear</button> <button>copy</button> <button>test</button> <button>set time to</button> <input/>
+</p>
+<ol start="0" data-bind="foreach: patterns"> 
+	<li data-bind="css: { 'persist': index() <= 16}">
+		<button data-bind="click: grabColorFromPicker">Grab</button> <span data-bind="style:{background:color()}" style="width:10px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 		R: <input data-bind="value: r" />
 		G: <input data-bind="value: g" />
 		B: <input data-bind="value: b" />
@@ -111,7 +167,7 @@ var hexconvert = function(num){
 			<option value="1">Led A</option> 
 			<option value="2">Led B</option>
 		</select> | 
-		<input data-bind="value: time" /> ms
+		<input data-bind="value: time" /> ms | <input type="checkbox" data-bind="checked: selected" /> <button data-bind="click: reset">Clear</button> <button data-bind="enabled: $parent.canPaste(), click: paste">Paste</button>
 	</li>
 </ol>
 
