@@ -54,7 +54,7 @@
 		var that = this;
 		this.colorPicker = Raphael.colorpicker( document.getElementById(id) );
 		var buffering = false;
-		this.latestColor = "";
+		this.latestColor = "#FFFFFF";
 		var send = function() {
 			if( onchange )
 				onchange( that.latestColor );
