@@ -118,7 +118,8 @@ var requesthandler = function( request, response ) {
 		'/api.js',
 		'/index.html',
 		'/patterns.html',
-		'/presets.js'
+		'/presets.js',
+		'/patterns.js'
 	];
 	
 	if( pathname.length >= 4 && pathname.substr(0,4) === "/api" )
