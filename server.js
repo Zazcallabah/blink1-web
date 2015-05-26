@@ -117,7 +117,8 @@ var requesthandler = function( request, response ) {
 		'/colorpicker.js',
 		'/api.js',
 		'/index.html',
-		'/patterns.html'
+		'/patterns.html',
+		'/presets.js'
 	];
 	
 	if( pathname.length >= 4 && pathname.substr(0,4) === "/api" )
