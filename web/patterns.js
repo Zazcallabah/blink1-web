@@ -5,7 +5,7 @@ var hexconvert = function(num){
 	return res;
 };
 
-	function Pattern(source){
+	function Pattern(source,track){
 		if( !source )
 			source ={};
 		this.r = ko.observable(0);
@@ -16,6 +16,9 @@ var hexconvert = function(num){
 		this.time = ko.observable(source.time || 0);
 		this.index = ko.observable(source.index || 0);
 		this.selected = ko.observable(false);
+		var that = this;
+		if(track)
+			this.selected.subscribe(function(value){track(value,that.index());});
 		this.color = ko.computed(function(){
 			return "#"+hexconvert(this.r())
 			+hexconvert(this.g())

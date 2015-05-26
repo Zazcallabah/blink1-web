@@ -22,6 +22,9 @@
 		.persist{
 			border-style: solid
 		}
+		.double{
+			transform: scale(1.5);
+		}
 	</style>
 
 	<script type="text/javascript">
@@ -37,15 +40,15 @@ var hexconvert = function(num){
 		this.stored = [];
 	}
 	
-	PasteStore.prototype.copy(){
-		this.stored = this.model.patterns
+	PasteStore.prototype.copy = function(){
+		this.stored = this.model.patterns()
 			.filter( function(p){ return p.selected() })
 			.map( function(p){ return p.clone(); } );
-		model.canPaste(this.stored.length > 0);
+		this.model.canPaste(this.stored.length > 0);
 	};
 	
-	PasteStore.prototype.paste(index){
-		for( var i=0; i<stored.length && index+i < this.model.patterns().length; i++)
+	PasteStore.prototype.paste=function(index){
+		for( var i=0; i<this.stored.length && index+i < this.model.patterns().length; i++)
 		{
 			this.model.patterns()[index+i].setFrom(this.stored[i]);
 		}
@@ -57,14 +60,63 @@ var hexconvert = function(num){
 		selected: ko.observable(),
 		presets: ko.observableArray(presets),
 		playtimes: ko.observable(0),
-		canPaste: ko.observable(false)
+		canPaste: ko.observable(false),
+		setTimeTo: ko.observable(500),
+		shiftpressed: false,
+		lastindex:-1
+	};
+	var handlemultiselect = function(value,index){
+		if( model.shiftpressed )
+		{
+			if( model.lastindex == -1 )
+				model.lastindex=index;
+			else
+			{
+				var min = Math.min(model.lastindex,index);
+				var max = Math.max(model.lastindex,index);
+				var origst = model.patterns()[model.lastindex].selected()
+				for( var i=min;i<=max;i++)
+				{
+					model.patterns()[i].selected(origst);
+				}
+			}
+		}
+	};
+	
+	document.onkeyup = function()
+	{
+		model.shiftpressed=false;
+		model.lastindex=-1;
+	}
+
+	document.onkeydown = function(event) {
+		var keyCode = (event||window.event).keyCode;
+		if( 16 === keyCode )
+			model.shiftpressed=true;
 	};
 
 	var api = new Api();
 	var picker = undefined;
 	var pastestore = new PasteStore(model);
 	
+	model.settimes = function()
+	{
+		var m = this;
+		this.patterns()
+			.filter( function(p){ return p.selected() })
+			.map( function(p){ p.time(m.setTimeTo()); });
+	}
 	
+	model.clear = function(){
+		this.patterns()
+			.filter( function(p){ return p.selected() })
+			.map( function(p){ p.reset(); });
+	};
+	
+	model.resetDefault = function(){
+		this.selected(this.presets()[0]);
+		//api.savePatterns();
+	};
 	
 	model.selected.subscribe(function(s){
 		var startindex = 32-s.lines.length;
@@ -73,15 +125,23 @@ var hexconvert = function(num){
 			if( i >= s.lines.length )
 				model.patterns()[i].reset();
 			else
+			{
 				model.patterns()[i].setColors( s.lines[i].color );
+				model.patterns()[i].ledn( s.lines[i].ledn );
+				model.patterns()[i].time( s.lines[i].time );
+			}
 		}
 	});
+	
 
 	window.onload = function() {
 		picker = new Pick( "colorpicker" );
 		for(var i=0;i<32;i++)
 		{
-			model.patterns.push(new Pattern({color:"#000000",ledn:0,time:0,index:i}));
+			model.patterns.push( new Pattern(
+				{color:"#000000",ledn:0,time:0,index:i},
+				handlemultiselect
+			));
 		}
 	/*	api.readPatterns(function(p){
 			model.patterns(p.map( function(ps){ return new Pattern(ps); } ) );
@@ -93,16 +153,19 @@ var hexconvert = function(num){
 </head>
 
 <body style="margin-top: 350px">
+
 <p>
-<button>Loop</button> <button>Stop</button>
-<button>Play</button> <input data-bind="playtimes" /> times
+<button>loop</button> <button>stop</button> <br/>
+<button>play</button> <input data-bind="playtimes" /> times
 </p>
 
 <p>
-<button>Save</button> <button>Refresh</button> | <button>Persist</button> <button>Reset</button>
+<button>save</button> <button>refresh</button> | <button>persist</button> <button data-bind="click: resetDefault">Reset</button>
 </p>
-<p><select data-bind="value:selected, options:presets, optionsText:'name', optionsCaption: 'Presets'"></select> | With selected: <button>clear</button> <button>copy</button> <button>test</button> <button>set time to</button> <input/>
+
+<p><select data-bind="value:selected, options:presets, optionsText:'name', optionsCaption: 'Presets'"></select> | With selected: <button data-bind="click: clear">Clear</button> <button onclick="pastestore.copy()">Copy</button> <button data-bind="click: settimes">set time to</button> <input data-bind="value: setTimeTo"/>
 </p>
+
 <ol start="0" data-bind="foreach: patterns"> 
 	<li data-bind="css: { 'persist': index() <= 16}">
 		<button data-bind="click: grabColorFromPicker">Grab</button> <span data-bind="style:{background:color()}" style="width:10px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -114,11 +177,11 @@ var hexconvert = function(num){
 			<option value="1">Led A</option> 
 			<option value="2">Led B</option>
 		</select> | 
-		<input data-bind="value: time" /> ms | <input type="checkbox" data-bind="checked: selected" /> <button data-bind="click: reset">Clear</button> <button data-bind="enabled: $parent.canPaste(), click: paste">Paste</button>
+		<input data-bind="value: time" /> ms | <input class="double" type="checkbox" data-bind="checked: selected" /> <button data-bind="click: reset">Clear</button> <button data-bind="enabled: $parent.canPaste(), click: paste">Paste</button>
 	</li>
 </ol>
 
-	<div id="colorpicker" style="width:300px; height:300px; position:absolute; top:0; left:0"></div>
+<div id="colorpicker" style="width:300px; height:300px; position:absolute; top:0; left:0"></div>
 
 </body>
 </html>
