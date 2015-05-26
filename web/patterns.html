@@ -115,8 +115,18 @@ var hexconvert = function(num){
 	
 	model.resetDefault = function(){
 		this.selected(this.presets()[0]);
-		//api.savePatterns();
 	};
+	
+	model.save = function(){
+		//api.savePatterns(this.patterns().map( function(p){ p.toObject(); }););
+	};
+	
+	model.load = function(){
+		/*api.readPatterns(function(p){
+			for( var i=0;i<32;i++)
+				model.patterns()[i].setFrom(p[i]);
+			});*/
+	}
 	
 	model.selected.subscribe(function(s){
 		var startindex = 32-s.lines.length;
@@ -125,11 +135,7 @@ var hexconvert = function(num){
 			if( i >= s.lines.length )
 				model.patterns()[i].reset();
 			else
-			{
-				model.patterns()[i].setColors( s.lines[i].color );
-				model.patterns()[i].ledn( s.lines[i].ledn );
-				model.patterns()[i].time( s.lines[i].time );
-			}
+				model.patterns()[i].setFrom( s.lines[i] );
 		}
 	});
 	
@@ -143,11 +149,8 @@ var hexconvert = function(num){
 				handlemultiselect
 			));
 		}
-	/*	api.readPatterns(function(p){
-			model.patterns(p.map( function(ps){ return new Pattern(ps); } ) );
-		});
-		*/
-		ko.applyBindings(model);
+		model.load();
+			ko.applyBindings(model);
 	};
 	</script>
 </head>
@@ -160,7 +163,7 @@ var hexconvert = function(num){
 </p>
 
 <p>
-<button>save</button> <button>refresh</button> | <button>persist</button> <button data-bind="click: resetDefault">Reset</button>
+<button data-bind="save">save</button> <button data-bind="load">refresh</button> | <button>persist</button> <button data-bind="click: resetDefault">Reset</button>
 </p>
 
 <p><select data-bind="value:selected, options:presets, optionsText:'name', optionsCaption: 'Presets'"></select> | With selected: <button data-bind="click: clear">Clear</button> <button onclick="pastestore.copy()">Copy</button> <button data-bind="click: settimes">set time to</button> <input data-bind="value: setTimeTo"/>

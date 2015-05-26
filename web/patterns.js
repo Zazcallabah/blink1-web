@@ -27,23 +27,26 @@ var hexconvert = function(num){
 	};
 	
 	Pattern.prototype.reset = function(){
-		this.setFrom({r:0,g:0,b:0,ledn:0,time:0});
+		this.setFrom({color:"#000000",ledn:0,time:0});
 	};
 	
 	Pattern.prototype.clone = function(){
 		return {
-			r: this.r(),
-			g: this.g(),
-			b: this.b(),
+			color: this.color(),
 			ledn: this.ledn(),
 			time: this.time()
 		};
 	};
 	
-	Pattern.prototype.setFrom=function(source){
+	Pattern.prototype.setFromRGB=function(source){
 		this.r(source.r);
 		this.g(source.g);
 		this.b(source.b);
+		this.ledn(source.ledn);
+		this.time(source.time);
+	}
+	Pattern.prototype.setFrom=function(source){
+		this.setColors(source.color);
 		this.ledn(source.ledn);
 		this.time(source.time);
 	}

@@ -27,9 +27,7 @@
 		webreq(
 			"POST",
 			"/api/leds",
-			function(r) {
-				document.getElementById("result").innerHTML = r;
-			},
+			undefined,
 			{ledn: ledn, time: time, color: color}
 		);
 	};
@@ -39,6 +37,14 @@
 			"GET",
 			"/api/patterns",
 			callback
+		);
+	};
+	Api.prototype.savePatterns = function( data ) {
+		webreq(
+			"POST",
+			"/api/patterns",
+			undefined,
+			data
 		);
 	};
 	
