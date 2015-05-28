@@ -30,21 +30,6 @@ var hexconvert = function(num){
 		this.setFrom({color:"#000000",ledn:0,time:0});
 	};
 	
-	Pattern.prototype.clone = function(){
-		return {
-			color: this.color(),
-			ledn: this.ledn(),
-			time: this.time()
-		};
-	};
-	
-	Pattern.prototype.setFromRGB=function(source){
-		this.r(source.r);
-		this.g(source.g);
-		this.b(source.b);
-		this.ledn(source.ledn);
-		this.time(source.time);
-	}
 	Pattern.prototype.setFrom=function(source){
 		this.setColors(source.color);
 		this.ledn(source.ledn);
@@ -65,14 +50,10 @@ var hexconvert = function(num){
 		pastestore.paste(this.index());
 	};
 	
-
 	Pattern.prototype.toObject = function(){
 		return {
-			color: "#" + 
-				hexconvert(this.r()) + 
-				hexconvert(this.g()) + 
-				hexconvert(this.b()),
-			ledn: this.ledn(),
+			color: this.color(),
+			ledn: parseInt(this.ledn(), 10),
 			time: this.time(),
 			index: this.index()
 		};

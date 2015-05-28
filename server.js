@@ -122,7 +122,7 @@ var requesthandler = function( request, response ) {
 		'/patterns.js'
 	];
 	
-	if( pathname.length >= 4 && pathname.substr(0,4) === "/api" )
+	if( pathname.length >= 5 && pathname.substr(0,5) === "/api/" )
 	{
 		if( typeof (apiCallMap[pathname]) === 'function' )
 		{
@@ -135,9 +135,9 @@ var requesthandler = function( request, response ) {
 			response.end();
 		}
 	}
-	else if( approvedFiles.Filter( function(f){ return f === pathname } ).length > 0 ) {
+	else if( approvedFiles.filter( function(f){ return f === pathname } ).length > 0 ) {
 
-		fs.readFile('./web'+pathname, "binary", function(err, file) {
+		fs.readFile(__dirname+'/web'+pathname, "binary", function(err, file) {
 			if(err) {        
 				console.log("500: "+pathname);
 				response.writeHead(500, {"Content-Type": "text/plain"});

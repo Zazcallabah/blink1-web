@@ -36,7 +36,7 @@
 		webreq(
 			"GET",
 			"/api/patterns",
-			callback
+			function(r){callback(JSON.parse(r));}
 		);
 	};
 	Api.prototype.savePatterns = function( data ) {
