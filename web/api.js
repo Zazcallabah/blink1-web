@@ -68,7 +68,7 @@
 			"POST",
 			"/api/control/togl",
 			undefined,
-			{speed:ms}
+			{speed:parseInt(ms,10)}
 		);
 	};
 	
