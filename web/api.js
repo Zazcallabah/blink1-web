@@ -67,6 +67,7 @@
 		webreq(
 			"POST",
 			"/api/control/togl",
+			undefined,
 			{speed:ms}
 		);
 	};
