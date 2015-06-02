@@ -91,8 +91,9 @@
 	
 	<p>
 		<button onclick="updateCurrent()">Update</button>
-		<button onclick="api.togl()">Togl</button>
-		<button onclick="api.readPatterns()">Read patterns</button>
+		<button onclick="api.togl(document.getElementById('toglms').value)">Togl</button>
+		<button onclick="api.readPatterns()">Read patterns</button><br/>
+		<input id="toglms" value="500"/>
 	</p>
 	
 	<pre style="clear:both" id="result"></pre>

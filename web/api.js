@@ -63,10 +63,11 @@
 			);
 	};
 	
-	Api.prototype.togl = function() {
+	Api.prototype.togl = function(ms) {
 		webreq(
 			"POST",
-			"/api/control/togl"
+			"/api/control/togl",
+			{speed:ms}
 		);
 	};
 	
