@@ -71,7 +71,14 @@
 			{speed:parseInt(ms,10)}
 		);
 	};
-	
+	Api.prototype.fade = function(ms) {
+		webreq(
+			"POST",
+			"/api/control/slowTogl",
+			undefined,
+			{speed:parseInt(ms,10)}
+		);
+	};
 	function Pick( id, onchange )
 	{
 		var that = this;
