@@ -74,7 +74,7 @@
 	Api.prototype.fade = function(ms) {
 		webreq(
 			"POST",
-			"/api/control/slowTogl",
+			"/api/control/slowtogl",
 			undefined,
 			{speed:parseInt(ms,10)}
 		);
