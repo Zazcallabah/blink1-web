@@ -70,7 +70,7 @@ Control.prototype.slowTogl = function( p, response ){
 	blnk.readCurrentColor( 1, function(l1){
 		blnk.readCurrentColor( 2, function(l2){
 			blnk.fadeToRGB(speed, l2.r, l2.g, l2.b, 1, true );
-			blnk.fadeToRGB(speed, l1.r, l2.g, l2.b, 2, true );
+			blnk.fadeToRGB(speed, l1.r, l1.g, l1.b, 2, true );
 			response.writeHead(200);
 			response.write( "togl mode activated" );
 			response.end();
