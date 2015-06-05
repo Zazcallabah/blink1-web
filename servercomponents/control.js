@@ -62,8 +62,20 @@ Control.prototype.togl = function( p, response ){
 			response.end();
 		});
 	});
+};
 
-
+Control.prototype.slowTogl = function( p, response ){
+	var speed = p.speed || 5000;
+	var blnk = this.blink;
+	blnk.readCurrentColor( 1, function(l1){
+		blnk.readCurrentColor( 2, function(l2){
+			blnk.fadeToRGB(speed, l2.r, l2.g, l2.b, 1, true );
+			blnk.fadeToRGB(speed, l1.r, l2.g, l2.b, 2, true );
+			response.writeHead(200);
+			response.write( "togl mode activated" );
+			response.end();
+		});
+	});
 };
 
 Control.prototype.pause = function( p, response ){

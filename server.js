@@ -100,6 +100,7 @@ var apiCallMap = {
 	"/api/version": getVersion,
 	"/api/patterns": function(req,resp){ splitVerb(req,resp,patterns); },
 	"/api/control/togl": function(req,resp) { controlAction( req,resp,"togl"); },
+	"/api/control/slowtogl": function(req,resp) { controlAction( req,resp,"slowTogl"); },
 	"/api/control/play": function(req,resp) { controlAction( req,resp,"play"); },
 	"/api/control/pause": function(req,resp) { controlAction( req,resp,"pause"); },
 };
