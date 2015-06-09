@@ -69,6 +69,7 @@ Patterns.prototype.post = function( patterns, response ){
 		var time  = parseInt(patterns[i].time || 0, 10);
 		var hexcolor = patterns[i].color || "#000000";
 		//check hexcolor valid data
+		console.log( "writePatternLine {time: "+time+", ledn: "+ledn+", color: "+hexcolor+", index: "+index+"}" );
 		var r = parseInt(hexcolor.substr(1,2),16);
 		var g = parseInt(hexcolor.substr(3,2),16);
 		var b = parseInt(hexcolor.substr(5,2),16);
