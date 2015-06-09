@@ -26,13 +26,14 @@ function Control(blink)
 
 Control.prototype.play = function( p, response ){
 	
-	var start = p.start || 0;
-	var end = p.end || 0;
-	var count = p.count || 0;
+	var start = parseInt( p.start || 0, 10 );
+	var end =  parseInt( p.end || 0, 10 );
+	var count = parseInt( p.count || 0, 10 );
 
 	if( start > end )
 		start = end;
-		
+
+	console.log( "playLoop("+start+", "+end+", "+count+")" );
 	this.blink.playLoop(start, end, count);
 
 	response.writeHead(200);
@@ -44,7 +45,9 @@ Control.prototype.togl = function( p, response ){
 
 	var speed = p.speed || 500;
 	var blnk = this.blink;
-	
+
+	console.log( "togl with speed "+speed );
+
 	blnk.readCurrentColor( 1, function(l1){
 		blnk.readCurrentColor( 2, function(l2){
 			blnk.setLed(2);
@@ -67,6 +70,7 @@ Control.prototype.togl = function( p, response ){
 Control.prototype.slowTogl = function( p, response ){
 	var speed = p.speed || 5000;
 	var blnk = this.blink;
+	console.log( "slowtogl with speed "+speed );
 	blnk.readCurrentColor( 1, function(l1){
 		blnk.readCurrentColor( 2, function(l2){
 			blnk.fadeToRGB(speed, l2.r, l2.g, l2.b, 1, true );
@@ -80,6 +84,7 @@ Control.prototype.slowTogl = function( p, response ){
 
 Control.prototype.pause = function( p, response ){
 
+	console.log( "pause" );
 	this.blink.pause();
 
 	response.writeHead(200);

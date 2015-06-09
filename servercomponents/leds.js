@@ -55,6 +55,7 @@ Leds.prototype.post = function(instruction, response){
 	var g = parseInt(hexcolor.substr(3,2),16);
 	var b = parseInt(hexcolor.substr(5,2),16);
 	
+	console.log( "fadeToRGB {time: "+time+", ledn: "+ledn+", color: "+hexcolor+"}" );
 	this.blink.fadeToRGB( time, r, g, b, ledn, true );
 
 	response.writeHead(200);
