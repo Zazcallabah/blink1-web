@@ -48,14 +48,17 @@
 		);
 	};
 	
-	Api.prototype.play = function(count){
+	Api.prototype.play = function(count,start,end){
 		webreq(
 			"POST",
 			"/api/control/play",
 			undefined,
-			{count:count||0}
-			);
-	};
+			{
+				count: count || 0,
+				start: start || 0,
+				end:     end || 0
+			});
+		};
 	Api.prototype.pause = function(){
 		webreq(
 			"POST",

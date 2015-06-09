@@ -60,6 +60,8 @@ var hexconvert = function(num){
 		selected: ko.observable(),
 		presets: ko.observableArray(presets),
 		playtimes: ko.observable(0),
+		playfrom: ko.observable(0),
+		playto:ko.observable(0),
 		canPaste: ko.observable(false),
 		setTimeTo: ko.observable(500),
 		shiftpressed: false,
@@ -130,7 +132,7 @@ var hexconvert = function(num){
 			});
 	}
 	model.play = function(){
-		api.play(this.playtimes());
+		api.play(this.playtimes(),this.playfrom(),this.playto());
 	};
 	model.loop = function(){
 		api.play();
@@ -170,7 +172,8 @@ var hexconvert = function(num){
 
 <p>
 <button data-bind="click:loop">Loop</button> <button data-bind="click:pause">Stop</button> <br/>
-<button data-bind="click:play">Play</button> <input data-bind="playtimes" /> times
+<button data-bind="click:play">Play</button> <input data-bind="playtimes" /> times <br/>
+From <input data-bind="playfrom" /> to  <input data-bind="playto" /> 
 </p>
 
 <p>
