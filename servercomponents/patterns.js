@@ -64,9 +64,9 @@ Patterns.prototype.post = function( patterns, response ){
 	
 	for( var i=0; i<patterns.length; i++ )
 	{
-		var index = patterns[i].index || 0;
-		var ledn = patterns[i].ledn || 0;
-		var time = patterns[i].time || 0;
+		var index = parseInt(patterns[i].index || 0, 10);
+		var ledn  = parseInt(patterns[i].ledn || 0, 10);
+		var time  = parseInt(patterns[i].time || 0, 10);
 		var hexcolor = patterns[i].color || "#000000";
 		//check hexcolor valid data
 		var r = parseInt(hexcolor.substr(1,2),16);
