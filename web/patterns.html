@@ -119,9 +119,17 @@ var hexconvert = function(num){
 		this.selected(this.presets()[0]);
 	};
 	
-	model.save = function(){
+	model.saveAll = function(){
 		api.savePatterns(
 			this.patterns().map( function(p){ return p.toObject(); })
+		);
+	};
+	
+	model.saveSelected = function(){
+		api.savePatterns(
+			this.patterns()
+				.filter( function(p){ return p.selected(); } )
+				.map( function(p){ return p.toObject(); })
 		);
 	};
 	
@@ -177,10 +185,10 @@ From <input data-bind="playfrom" /> to  <input data-bind="playto" />
 </p>
 
 <p>
-<button data-bind="click:save">Save</button> <button data-bind="load">Refresh</button> | <button>persist</button> <button data-bind="click: resetDefault">Reset</button>
+<button data-bind="click:saveAll">Save all</button> <button data-bind="load">Refresh</button> | <button>persist</button> <button data-bind="click: resetDefault">Reset</button>
 </p>
 
-<p><select data-bind="value:selected, options:presets, optionsText:'name', optionsCaption: 'Presets'"></select> | With selected: <button data-bind="click: clear">Clear</button> <button onclick="pastestore.copy()">Copy</button> <button data-bind="click: settimes">set time to</button> <input data-bind="value: setTimeTo"/>
+<p><select data-bind="value:selected, options:presets, optionsText:'name', optionsCaption: 'Presets'"></select> | With selected: <button data-bind="click: clear">Clear</button>  <button data-bind="click: saveSelected">Save</button> <button onclick="pastestore.copy()">Copy</button> <button data-bind="click: settimes">set time to</button> <input data-bind="value: setTimeTo"/>
 </p>
 
 <ol start="0" data-bind="foreach: patterns"> 
