@@ -51,7 +51,7 @@ Patterns.prototype.get = function(response){
 		}
 	};
 	for( var i = 0; i<=31; i++ )
-		this.blink.readPatternLine( i, function(c){callback(c,i);} );
+		this.blink.readPatternLine( {lineIndex:i, callback:function(c){callback(c,i);}} );
 };
 
 Patterns.prototype.post = function( patterns, response ){
@@ -74,8 +74,8 @@ Patterns.prototype.post = function( patterns, response ){
 		var g = parseInt(hexcolor.substr(3,2),16);
 		var b = parseInt(hexcolor.substr(5,2),16);
 
-		this.blink.setLed( ledn );
-		this.blink.writePatternLine(time,r,g,b,index,true);
+		this.blink.setLed( {ledn:ledn} );
+		this.blink.writePatternLine({speed:time,r:r,g:g,b:b,lineIndex:index});
 	}
 	response.writeHead(200);
 	response.write( "" + patterns.length + "patterns written");

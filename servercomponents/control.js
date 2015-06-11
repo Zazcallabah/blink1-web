@@ -34,7 +34,7 @@ Control.prototype.play = function( p, response ){
 		start = end;
 
 	console.log( "playLoop("+start+", "+end+", "+count+")" );
-	this.blink.playLoop(start, end, count);
+	this.blink.playLoop({play: 1, start:start, end:end, count:count});
 
 	response.writeHead(200);
 	response.write( "playing" );
@@ -48,38 +48,38 @@ Control.prototype.togl = function( p, response ){
 
 	console.log( "togl with speed "+speed );
 
-	blnk.readCurrentColor( 1, function(l1){
-		blnk.readCurrentColor( 2, function(l2){
-			blnk.setLed(2);
-			blnk.writePatternLine( speed, l1.r, l1.g, l1.b, 28, true );
-			blnk.setLed(1);
-			blnk.writePatternLine( speed, l2.r, l2.g, l2.b, 29, true );
-			blnk.setLed(2);
-			blnk.writePatternLine( speed, l2.r, l2.g, l2.b, 30, true );
-			blnk.setLed(1);
-			blnk.writePatternLine( speed, l1.r, l1.g, l1.b, 31, true );
+	blnk.readRGB( {ledn:1, callback:function(l1){
+		blnk.readRGB( {ledn:2, callback:function(l2){
+			blnk.setLed({ledn:2});
+			blnk.writePatternLine(  {fadeMillis:speed, r:l1.r, g:l1.g, b:l1.b, lineIndex: 28} );
+			blnk.setLed({ledn:1});
+			blnk.writePatternLine(  {fadeMillis:speed, r:l2.r, g:l2.g, b:l2.b, lineIndex:29} );
+			blnk.setLed({ledn:2});
+			blnk.writePatternLine(  {fadeMillis:speed, r:l2.r, g:l2.g, b:l2.b, lineIndex: 30} );
+			blnk.setLed({ledn:1});
+			blnk.writePatternLine( {fadeMillis:speed, r:l1.r, g:l1.g, b:l1.b, lineIndex: 31} );
 			
-			blnk.playLoop(28,31,0);
+			this.blink.playLoop({play: 1, start:28, end:31});
 			response.writeHead(200);
 			response.write( "togl mode activated" );
 			response.end();
-		});
-	});
+		}});
+	}});
 };
 
 Control.prototype.slowTogl = function( p, response ){
 	var speed = p.speed || 5000;
 	var blnk = this.blink;
 	console.log( "slowtogl with speed "+speed );
-	blnk.readCurrentColor( 1, function(l1){
-		blnk.readCurrentColor( 2, function(l2){
-			blnk.fadeToRGB(speed, l2.r, l2.g, l2.b, 1, true );
-			blnk.fadeToRGB(speed, l1.r, l1.g, l1.b, 2, true );
+	blnk.readRGB( {ledn:1, callback:function(l1){
+		blnk.readRGB( {ledn:2, callback:function(l2){
+			blnk.fadeRGB({fadeMillis:speed, r:l2.r, g:l2.g, b:l2.b, ledn:1 );
+			blnk.fadeRGB({fadeMillis:speed, r:l1.r, g:l1.g, b:l1.b, ledn:2 );
 			response.writeHead(200);
 			response.write( "togl mode activated" );
 			response.end();
-		});
-	});
+		}});
+	}});
 };
 
 Control.prototype.pause = function( p, response ){
