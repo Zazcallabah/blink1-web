@@ -34,7 +34,7 @@ Control.prototype.play = function( p, response ){
 		start = end;
 
 	console.log( "playLoop("+start+", "+end+", "+count+")" );
-	this.blink.playLoop({play: 1, start:start, end:end, count:count});
+	this.blink().playLoop({play: 1, start:start, end:end, count:count});
 
 	response.writeHead(200);
 	response.write( "playing" );
@@ -44,7 +44,7 @@ Control.prototype.play = function( p, response ){
 Control.prototype.togl = function( p, response ){
 
 	var speed = p.speed || 500;
-	var blnk = this.blink;
+	var blnk = this.blink();
 
 	console.log( "togl with speed "+speed );
 
@@ -59,7 +59,7 @@ Control.prototype.togl = function( p, response ){
 			blnk.setLed({ledn:1});
 			blnk.writePatternLine( {fadeMillis:speed, r:l1.r, g:l1.g, b:l1.b, lineIndex: 31} );
 			
-			this.blink.playLoop({play: 1, start:28, end:31});
+			blnk.playLoop({play: 1, start:28, end:31});
 			response.writeHead(200);
 			response.write( "togl mode activated" );
 			response.end();
@@ -69,7 +69,7 @@ Control.prototype.togl = function( p, response ){
 
 Control.prototype.slowTogl = function( p, response ){
 	var speed = p.speed || 5000;
-	var blnk = this.blink;
+	var blnk = this.blink();
 	console.log( "slowtogl with speed "+speed );
 	blnk.readRGB( {ledn:1, callback:function(l1){
 		blnk.readRGB( {ledn:2, callback:function(l2){
@@ -85,7 +85,7 @@ Control.prototype.slowTogl = function( p, response ){
 Control.prototype.pause = function( p, response ){
 
 	console.log( "pause" );
-	this.blink.pause();
+	this.blink().pause();
 
 	response.writeHead(200);
 	response.write( "paused" );

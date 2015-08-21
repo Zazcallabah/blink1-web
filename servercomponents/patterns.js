@@ -50,8 +50,9 @@ Patterns.prototype.get = function(response){
 			return;
 		}
 	};
+	var blnk = this.blink();
 	for( var i = 0; i<=31; i++ )
-		this.blink.readPatternLine( {lineIndex:i, callback:function(c){callback(c,i);}} );
+		blnk.readPatternLine( {lineIndex:i, callback:function(c){callback(c,i);}} );
 };
 
 Patterns.prototype.post = function( patterns, response ){
@@ -60,7 +61,8 @@ Patterns.prototype.post = function( patterns, response ){
 		return;
 
 	// first make sure led isnt playing
-	this.blink.pause();
+	var blnk = this.blink();
+	blnk.pause();
 	
 	for( var i=0; i<patterns.length; i++ )
 	{
@@ -74,8 +76,8 @@ Patterns.prototype.post = function( patterns, response ){
 		var g = parseInt(hexcolor.substr(3,2),16);
 		var b = parseInt(hexcolor.substr(5,2),16);
 
-		this.blink.setLed( {ledn:ledn} );
-		this.blink.writePatternLine({speed:time,r:r,g:g,b:b,lineIndex:index});
+		blnk().setLed( {ledn:ledn} );
+		blnk().writePatternLine({speed:time,r:r,g:g,b:b,lineIndex:index});
 	}
 	response.writeHead(200);
 	response.write( "" + patterns.length + "patterns written");

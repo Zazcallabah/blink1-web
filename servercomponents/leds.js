@@ -27,9 +27,9 @@ function hexconvert(num){
 };
 
 Leds.prototype.get = function(response){
-	var that = this;
-	that.blink.readRGB( 1, function(c1){
-		that.blink.readRGB( 2, function(c2){
+	var blnk = this.blink();
+	blnk.readRGB( 1, function(c1){
+		blnk.readRGB( 2, function(c2){
 			var l1 = "#" + 
 				hexconvert(c1.r) + 
 				hexconvert(c1.g) + 
@@ -56,7 +56,7 @@ Leds.prototype.post = function(instruction, response){
 	var b = parseInt(hexcolor.substr(5,2),16);
 	
 	console.log( "fadeToRGB {time: "+time+", ledn: "+ledn+", color: "+hexcolor+"}" );
-	this.blink.fadeRGB( {fadeMillis:time,r: r,g: g,b: b, ledn:ledn:});
+	this.blink().fadeRGB( {fadeMillis:time,r: r,g: g,b: b, ledn:ledn:});
 
 	response.writeHead(200);
 	response.write( "set led "+ledn+" to "+hexcolor+ " over "+time+"ms" );

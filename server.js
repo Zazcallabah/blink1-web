@@ -9,7 +9,10 @@ var http = require("http"),
 	Patterns = require('./servercomponents/patterns.js'),
 	Control = require('./servercomponents/control.js');
 
-var blink = new Blink1();
+var blink = function(serial){
+	return new Blink1(serial);
+}
+
 var leds = new Leds(blink);
 var patterns = new Patterns(blink);
 var control = new Control(blink);
@@ -64,7 +67,7 @@ var controlAction = function( request, response, action ) {
 * returns { playing: [0/1], start:[0-31], end:[0-31], count: 0, position: 0-31 }
 */
 var getStatus = function(req,response){
-	blink.readPlayState(function(s){
+	blink().readPlayState(function(s){
 	response.writeHead(200);
 		response.write( JSON.stringify( {
 			playing: s.playing,
@@ -83,7 +86,7 @@ var getStatus = function(req,response){
 * returns {version:"versionstring"}
 */
 var getVersion = function(req,response){
-	blink.version(function(v){
+	blink().version(function(v){
 		response.writeHead(200);
 		response.write( JSON.stringify( {version:v} ) );
 		response.end();
@@ -127,7 +130,16 @@ var requesthandler = function( request, response ) {
 	{
 		if( typeof (apiCallMap[pathname]) === 'function' )
 		{
-			apiCallMap[pathname](request,response);
+			try
+			{
+				apiCallMap[pathname](request,response);
+			}
+			catch(e)
+			{
+				response.writeHead(500, {"Content-Type": "text/plain"});
+				response.write( e.toString() );
+				response.end();
+			}
 		}
 		else
 		{
