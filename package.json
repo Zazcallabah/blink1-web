@@ -4,5 +4,5 @@
   "version": "0.0.1",
   "dependencies": {
     "node-blink1": "git+https://github.com/Zazcallabah/node-blink1.git#427d51"
-  },
+  }
 }
