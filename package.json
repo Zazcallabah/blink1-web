@@ -3,6 +3,6 @@
   "description": "A node.js hosted web interface for the blink(1), depends on https://github.com/Zazcallabah/node-blink1",
   "version": "0.0.1",
   "dependencies": {
-    "node-blink1": "git+https://github.com/Zazcallabah/node-blink1.git#427d51"
+    "node-blink1": "git+https://github.com/Zazcallabah/node-blink1.git"
   }
 }
