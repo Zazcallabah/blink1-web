@@ -73,8 +73,8 @@ Control.prototype.slowTogl = function( p, response ){
 	console.log( "slowtogl with speed "+speed );
 	blnk.readRGB( {ledn:1, callback:function(l1){
 		blnk.readRGB( {ledn:2, callback:function(l2){
-			blnk.fadeRGB({fadeMillis:speed, r:l2.r, g:l2.g, b:l2.b, ledn:1 );
-			blnk.fadeRGB({fadeMillis:speed, r:l1.r, g:l1.g, b:l1.b, ledn:2 );
+			blnk.fadeRGB({fadeMillis:speed, r:l2.r, g:l2.g, b:l2.b, ledn:1} );
+			blnk.fadeRGB({fadeMillis:speed, r:l1.r, g:l1.g, b:l1.b, ledn:2} );
 			response.writeHead(200);
 			response.write( "togl mode activated" );
 			response.end();
