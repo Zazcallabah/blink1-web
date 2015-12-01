@@ -59,7 +59,7 @@ Control.prototype.togl = function( p, response ){
 			blnk.setLed({ledn:1});
 			blnk.writePatternLine( {fadeMillis:speed, r:l1.r, g:l1.g, b:l1.b, lineIndex: 31} );
 			
-			this.blink.playLoop({play: 1, start:28, end:31});
+			blnk.playLoop({play: 1, start:28, end:31});
 			response.writeHead(200);
 			response.write( "togl mode activated" );
 			response.end();
