@@ -7,9 +7,9 @@ var http = require("http"),
 	Leds = require('./servercomponents/leds.js'),
 	Patterns = require('./servercomponents/patterns.js'),
 	Control = require('./servercomponents/control.js');
-
+var _blink = new Blink1();
 var blink = function(serial){
-	return new Blink1(serial);
+	return _blink;
 }
 
 var leds = new Leds(blink);
