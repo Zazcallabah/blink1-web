@@ -76,8 +76,8 @@ Patterns.prototype.post = function( patterns, response ){
 		var g = parseInt(hexcolor.substr(3,2),16);
 		var b = parseInt(hexcolor.substr(5,2),16);
 
-		blnk().setLed( {ledn:ledn} );
-		blnk().writePatternLine({speed:time,r:r,g:g,b:b,lineIndex:index});
+		blnk.setLed( {ledn:ledn} );
+		blnk.writePatternLine({speed:time,r:r,g:g,b:b,lineIndex:index});
 	}
 	response.writeHead(200);
 	response.write( "" + patterns.length + "patterns written");
