@@ -6,7 +6,9 @@ var http = require("http"),
 	Blink1 = require('node-blink1'),
 	Leds = require('./servercomponents/leds.js'),
 	Patterns = require('./servercomponents/patterns.js'),
-	Control = require('./servercomponents/control.js');
+	Control = require('./servercomponents/control.js'),
+	Gamma = require('./servercomponents/gamma.js');
+
 var _blink = new Blink1();
 var blink = function(serial){
 	return _blink;
@@ -15,6 +17,7 @@ var blink = function(serial){
 var leds = new Leds(blink);
 var patterns = new Patterns(blink);
 var control = new Control(blink);
+var gamma = new Gamma(blink);
 
 var hexconvert = function(num){
 	var res = num.toString(16);
@@ -98,6 +101,7 @@ var getVersion = function(req,response){
 // setcolor w/o fade
 var apiCallMap = {
 	"/api/leds": function(req,resp){ splitVerb(req,resp,leds); }, 
+	"/api/gamma": function(req,resp){ splitVerb(req,resp,gamma); },
 	"/api/status": getStatus,
 	"/api/version": getVersion,
 	"/api/patterns": function(req,resp){ splitVerb(req,resp,patterns); },

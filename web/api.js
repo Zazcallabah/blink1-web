@@ -48,6 +48,18 @@
 		);
 	};
 	
+	Api.prototype.gammaValue = function( val ){
+		webreq(
+			"POST",
+			"/api/gamma",
+			function(r){
+			document.getElementById('gammavalue').innerText = r;
+			},
+			{
+				gamma: val || 0
+			});
+	};
+	
 	Api.prototype.play = function(count,start,end){
 		webreq(
 			"POST",
