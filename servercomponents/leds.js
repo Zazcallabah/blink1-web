@@ -26,17 +26,18 @@ function hexconvert(num){
 	return res;
 };
 
+function toColor(r,g,b){
+ return "#" + 
+	hexconvert(r) + 
+	hexconvert(g) + 
+	hexconvert(b);
+};
+
 Leds.prototype.get = function(response){
 	var blnk = this.blink();
 	var writeResponse = function(c1, c2){
-		var l1 = "#" + 
-			hexconvert(c1.r) + 
-			hexconvert(c1.g) + 
-			hexconvert(c1.b);
-		var l2 = "#" + 
-			hexconvert(c2.r) + 
-			hexconvert(c2.g) + 
-			hexconvert(c2.b);
+		var l1 = toColor( c1.r, c1.g, c1.b );
+		var l2 = toColor( c2.r, c2.g, c2.b );
 	
 		response.writeHead(200);
 		response.write( JSON.stringify( {ledA:l1,ledB:l2} ) );
@@ -58,12 +59,14 @@ Leds.prototype.post = function(instruction, response){
 	var g = parseInt(hexcolor.substr(3,2),16);
 	var b = parseInt(hexcolor.substr(5,2),16);
 	
-	console.log( "fadeToRGB {time: "+time+", ledn: "+ledn+", color: "+hexcolor+"}" );
-	this.blink().fadeRGB( {fadeMillis:time,r: r,g: g,b: b, ledn:ledn});
-
+	this.blink().fadeRGB( {fadeMillis:time,r: r,g: g,b: b, ledn:ledn, callback:function(opt){
+		var raw = toColor( Math.round(opt.r), Math.round(opt.g), Math.round(opt.b) );
+		console.log( "fadeToRGB {time: "+time+", ledn: "+ledn+", color: "+hexcolor+", raw: "+raw+"}" );
 	response.writeHead(200);
-	response.write( "set led "+ledn+" to "+hexcolor+ " over "+time+"ms" );
+	response.write( "set led "+ledn+" to "+hexcolor+ " (raw: "+ raw +") over "+time+"ms" );
 	response.end();
+	}});
+
 };
 
 
