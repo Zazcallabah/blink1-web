@@ -42,7 +42,6 @@ Leds.prototype.get = function(response){
 		response.write( JSON.stringify( {ledA:l1,ledB:l2} ) );
 		response.end();	
 	};
-	function()
 	blnk.readRGB({ ledn: 1, callback: function(c1){
 		blnk.readRGB({ ledn: 2,	callback: function(c2){
 			writeResponse(c1,c2);
