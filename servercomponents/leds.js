@@ -28,22 +28,26 @@ function hexconvert(num){
 
 Leds.prototype.get = function(response){
 	var blnk = this.blink();
-	blnk.readRGB( 1, function(c1){
-		blnk.readRGB( 2, function(c2){
-			var l1 = "#" + 
-				hexconvert(c1.r) + 
-				hexconvert(c1.g) + 
-				hexconvert(c1.b);
-			var l2 = "#" + 
-				hexconvert(c2.r) + 
-				hexconvert(c2.g) + 
-				hexconvert(c2.b);
-
-			response.writeHead(200);
-			response.write( JSON.stringify( {ledA:l1,ledB:l2} ) );
-			response.end();
-		});
-	});
+	var writeResponse = function(c1, c2){
+		var l1 = "#" + 
+			hexconvert(c1.r) + 
+			hexconvert(c1.g) + 
+			hexconvert(c1.b);
+		var l2 = "#" + 
+			hexconvert(c2.r) + 
+			hexconvert(c2.g) + 
+			hexconvert(c2.b);
+	
+		response.writeHead(200);
+		response.write( JSON.stringify( {ledA:l1,ledB:l2} ) );
+		response.end();	
+	};
+	function()
+	blnk.readRGB({ ledn: 1, callback: function(c1){
+		blnk.readRGB({ ledn: 2,	callback: function(c2){
+			writeResponse(c1,c2);
+		}});
+	}});
 };
 
 Leds.prototype.post = function(instruction, response){
