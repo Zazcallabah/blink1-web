@@ -3,7 +3,6 @@ var port = 19333;
 var http = require("http"),
 	url = require("url"),
 	fs = require("fs"),
-	sys = require('sys'),
 	Blink1 = require('node-blink1'),
 	Leds = require('./servercomponents/leds.js'),
 	Patterns = require('./servercomponents/patterns.js'),
