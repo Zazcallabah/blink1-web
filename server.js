@@ -9,8 +9,12 @@ var http = require("http"),
 	Control = require('./servercomponents/control.js'),
 	Gamma = require('./servercomponents/gamma.js');
 
-var _blink = new Blink1();
+var _blink = undefined;
 var blink = function(serial){
+	if( !_blink )
+	{
+		_blink = new Blink1();
+	}
 	return _blink;
 }
 
@@ -37,10 +41,18 @@ var parseRequest = function(request, callback){
 		}
 	});
 	request.on('end', function() {
-		if( queryData === "" )
-			callback( queryData );
-		else
-			callback( JSON.parse( queryData ) );
+		try
+		{
+			if( queryData === "" )
+				callback( true );
+			else
+				callback( JSON.parse( queryData ) );
+		} catch( e )
+		{
+			_blink=undefined;
+			console.log(e);
+			callback();
+		}
 	});
 };
 
@@ -50,7 +62,15 @@ var splitVerb = function(request,response,controller) {
 	}
 	else if( request.method === 'POST' ) {
 		parseRequest( request, function(data){
-			controller.post(data,response);
+			if( data )
+			{
+				controller.post(data,response);
+			}
+			else
+			{
+				response.writeHead(500, {"Content-Type": "text/plain"});
+				response.end();
+			}
 		});
 	}
 };
@@ -58,7 +78,15 @@ var splitVerb = function(request,response,controller) {
 var controlAction = function( request, response, action ) {
 	if( request.method === 'POST' ) {
 		parseRequest( request, function(p){
-			control[action](p,response);
+			if( p )
+			{
+				control[action](p,response);
+			}
+			else
+			{
+				response.writeHead(500, {"Content-Type": "text/plain"});
+				response.end();
+			}
 		});
 	}
 };
@@ -139,6 +167,7 @@ var requesthandler = function( request, response ) {
 			}
 			catch(e)
 			{
+				console.log(e);
 				response.writeHead(500, {"Content-Type": "text/plain"});
 				response.write( e.toString() );
 				response.end();
