@@ -14,20 +14,11 @@ Clone this repo
 
     git clone https://github.com/Zazcallabah/blink1-web.git
     cd blink1-web
+    npm install
 
-We need node-hid, and it needs sudo for some reason
+The npm install may need sudo. If it fails, try installing node-hid globally.
 
-    sudo npm install node-hid
-
-If you can open a node shell and can require('node-hid') without error, then you can proceed.
-
-We need node-blink1, preferably a version that supports mk2 with firmware 204
-
-    npm install "git+https://github.com/Zazcallabah/node-blink1.git"
-
-now you can start the server and browse to the webpage
-
-    nodejs server.js
+    node server.js
     http://localhost:19333
 
 
@@ -59,7 +50,7 @@ Install npm
 
     sudo apt-get install npm
 
-Name conflict in package manager means you have to manually link the binary
+Name conflict in package manager may mean you have to manually link the binary
 
     sudo ln -s /usr/bin/nodejs /usr/bin/node
 
@@ -72,12 +63,6 @@ npm cant handle https apparently
     sudo npm config set registry http://registry.npmjs.org/
     npm config set registry http://registry.npmjs.org/
 
-node-hid wont work if your node version is too low, if you are below ~0.8, do this
-
-    sudo npm cache clean -f
-    sudo npm install -g n
-    sudo n 0.10.28
-
 blink1 specific instructions
 
     wget https://raw.githubusercontent.com/todbot/blink1/master/linux/51-blink1.rules
@@ -87,3 +72,6 @@ blink1 specific instructions
 reboot is needed to fix node version mismatch
 
     sudo shutdown -r now
+    
+After that just do `npm install` in this repo.
+
