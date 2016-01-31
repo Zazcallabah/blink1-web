@@ -21,6 +21,14 @@
 			function(r){ callback(JSON.parse(r)); }
 		);
 	};
+
+	Api.prototype.getVersion = function(callback) {
+		webreq(
+			"GET",
+			"/api/version",
+			function(r){ callback(JSON.parse(r)); }
+		);
+	};
 	
 	// ledn = {0,1,2}, time in ms, color is hexcolor
 	Api.prototype.fadeToColor = function(ledn,time,color) {
@@ -48,16 +56,19 @@
 		);
 	};
 	
-	Api.prototype.gammaValue = function( val ){
+	Api.prototype.setGammaValue = function( val ){
 		webreq(
 			"POST",
 			"/api/gamma",
-			function(r){
-			document.getElementById('gammavalue').innerText = r;
-			},
-			{
-				gamma: val || 0
-			});
+			undefined,
+			{ gamma: val || 0 });
+	};
+	
+	Api.prototype.getGammaValue = function( val ){
+		webreq(
+			"GET",
+			"/api/gamma",
+			function(r){ callback(JSON.parse(r)); });
 	};
 	
 	Api.prototype.play = function(count,start,end){

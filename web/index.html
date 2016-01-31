@@ -6,17 +6,33 @@
 	<script type="text/javascript" src="colorpicker.js" charset="utf-8"></script>
 	<script type="text/javascript" src="api.js" charset="utf-8"></script>
 	<style type="text/css">
-		.outline {
-			text-shadow:
-			-1px -1px 0 #000,
-			1px -1px 0 #000,
-			-1px 1px 0 #000,
-			1px 1px 0 #000;  
-		}
-		button {
-			font-size: 1.5em;
-			padding: 1.1em 1.4em;
-		}
+	.radio {
+		position: relative;
+		display: block;
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+
+	form {
+		display:block;
+		margin:10px;
+		padding:20px;
+	}
+
+	button {
+		font-size: 1.5em;
+		padding: 1.1em 1.4em;
+		border: 2px solid black;
+		border-radius: 10px;
+		margin: 5px;
+	}
+
+	#cled1, #cled2 {
+		width: 100px;
+		height: 100px;
+		margin: 20px;
+		border: 2px solid black;
+	}
 	</style>
 
 	<script type="text/javascript">
@@ -29,77 +45,65 @@
 			l = 1;
 		else if( selected === "led2" )
 			l = 2;
-		var color = c;
-		if( c === "red" )
-			color = "#FF0000";
-		else if( c === "green" )
-			color = "#00FF00";
-		else if( c === "blue" )
-			color = "#0000FF";
-		else if( c === "cyan" )
-			color = "#00FFFF";
-		else if( c === "magenta" )
-			color = "#FF00FF";
-		else if( c === "yellow" )
-			color = "#FFFF00";
-		else if( c === "off" )
-			color = "#000000";
-		else if( c === "on" )
-			color = "#FFFFFF";
-
-		api.fadeToColor( l, 1, color );
+		api.fadeToColor( l, 1, c );
 	}
 	
 
 	var updateCurrent = function(){
 		api.getCurrentColor( function(l){
-			document.getElementById("l1").style.borderColor = l.ledA;
-			document.getElementById("l2").style.borderColor = l.ledB;
+			document.getElementById("cled1").style.backgroundColor = l.ledA;
+			document.getElementById("cled2").style.backgroundColor = l.ledB;
 		});
 	};
 
 	window.onload = function() {
-		/*
-		TODO fix some sort of param for this part
-		if( window.location.search.length > 1 )
-			go( decodeURI( window.location.search.substring(1) ) );
-		*/
-		var p1 = new Pick( "l1", function(c){ api.fadeToColor(1,1,c);} );
-		var p2 = new Pick( "l2", function(c){ api.fadeToColor(2,1,c);} );
-	};
-	</script>
+		 var colours = [
+	"#000000","#444444","#888888","#AAAAAA","#DDDDDD","#FFFFFF","<br>",
+	"#FF0000","#FF4000","#FF8000","#FFBF00","#FFFF00","#BFFF00","#80FF00","#40FF00","#00FF00","#00FF40","#00FF80","#00FFBF","#00FFFF","#00BFFF","#0080FF","#0040FF","#0000FF","#4000FF","#8000FF","#BF00FF","#FF00FF","#FF00BF","#FF0080","#FF0040","<br>",
+	"#610B0B","#61210B","#61380B","#5F4C0B","#5E610B","#4B610B","#38610B","#21610B","#0B610B","#0B6121","#0B6138","#0B614B","#0B615E","#0B4C5F","#0B3861","#0B2161","#0B0B61","#210B61","#380B61","#4C0B5F","#610B5E","#610B4B","#610B38","#610B21","<br>",
+	"#F5A9A9","#F5BCA9","#F5D0A9","#F3E2A9","#F2F5A9","#E1F5A9","#D0F5A9","#BCF5A9","#A9F5A9","#A9F5BC","#A9F5D0","#A9F5E1","#A9F5F2","#A9E2F3","#A9D0F5","#A9BCF5","#A9A9F5","#BCA9F5","#D0A9F5","#E2A9F3","#F5A9F2","#F5A9E1","#F5A9D0","#F5A9BC" 
+		 ];
+	var str_html = "";
+	for( var i =0; i<colours.length; i++ )
+	{
+		if(colours[i] === "<br>" )
+			str_html += "<br>";
+		else
+			str_html += "<button onclick=\"setColor('"+colours[i]+"')\" style=\"background-color:"+colours[i]+"\"></button>";
+	}
+	document.getElementById("buttonlist").innerHTML = str_html;
+};
+</script>
 </head>
 
-<body style="margin-top: 350px">
+<body>
+<h2>Current colors displayed</h2>
+<ul><li id="cled1">&nbsp;</li><li id="cled2">&nbsp;</li></ul>
+<p><button onclick="updateCurrent()">Update</button></p>
 
-	<form name="ledchoice" style="float:left; margin:1em">
-		<input type="radio" name="led" value="both" id="ledchoiceboth" checked="checked" /> <label for="ledchoiceboth">Both</label><br/>
-		<input type="radio" name="led" value="led1" id="ledchoice1" /> <label for="ledchoice1">Side A</label><br/>
-		<input type="radio" name="led" value="led2" id="ledchoice2" /> <label for="ledchoice2">Side B</label>
+<hr>
+
+	<form name="ledchoice">
+		<div class="radio"><label><input type="radio" name="led" value="both" id="ledchoiceboth" checked="checked" /> Both</label></div>
+		<div class="radio"><label><input type="radio" name="led" value="led1" id="ledchoice1" /> Side A</label></div>
+		<div class="radio"><label><input type="radio" name="led" value="led2" id="ledchoice2" /> Side B</label></div>
 	</form>
 
-	<p>
-		<button onclick="setColor('off')">Off</button>
-		<button onclick="setColor('on')" class="outline" style="color:white">White</button>
-		<button onclick="setColor('red')" style="color:red">Red</button>
-		<button onclick="setColor('green')" style="color:green">Green</button>
-		<button onclick="setColor('blue')" style="color:blue">Blue</button>
-		<button onclick="setColor('cyan')" class="outline" style="color:cyan">Cyan</button>
-		<button onclick="setColor('magenta')" style="color:magenta">Magenta</button>
-		<button onclick="setColor('yellow')" class="outline" style="color:yellow">Yellow</button>
+	<p id="buttonlist">
 	</p>
 	
 	<p>
-		<button onclick="updateCurrent()">Update</button>
-		<button onclick="api.togl(document.getElementById('toglms').value)">Togl</button>
-		<button onclick="api.fade(document.getElementById('toglms').value)">Fade</button><br/>
-		<input id="toglms" value="500"/>
+		<button onclick="api.togl(500)">Togl Quick</button>
+		<button onclick="api.togl(5000)">Togl Slow</button>
+		<button onclick="api.fade(2000)">Fade</button><br/>
 	</p>
-	
-	<pre style="clear:both" id="result"></pre>
 
-	<div id="l1" style="width:300px; height:300px; position:absolute; top:0; left:0; border-bottom: 5px solid white"></div>
-	<div id="l2" style="width:300px; height:300px; position:absolute; top:0; left:310px; border-bottom: 5px solid white"></div>
-<p><input id="gamma" type="range" min="0" max="6" step="0.1" oninput="api.gammaValue(document.getElementById('gamma').value)"><span id="gammavalue"></span></p>
+	<p>
+		<ul>
+			<li><a href="colorpicker.html">Color picker</a></li>
+			<li><a href="patterns.html">Patterns</a></li>
+			<li><a href="settings.html">Settings</a></li>
+		</ul>
+	</p>
 	</body>
 </html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Blink(1)</title>
+	<script type="text/javascript" src="raphael.js" charset="utf-8"></script>
+	<script type="text/javascript" src="colorpicker.js" charset="utf-8"></script>
+	<script type="text/javascript" src="api.js" charset="utf-8"></script>
+	<style type="text/css">
+		button {
+			font-size: 1.3em;
+			padding: 1.1em 1.4em;
+		}
+		#cled1, #cled2 {
+			width: 100px;
+			height: 100px;
+			margin: 20px;
+			border: 2px solid black;
+		}
+	</style>
+
+	<script type="text/javascript">
+	var api = new Api();
+	var updateCurrent = function(){
+		api.getCurrentColor( function(l){
+			document.getElementById("cled1").style.backgroundColor = l.ledA;
+			document.getElementById("cled2").style.backgroundColor = l.ledB;
+		});
+	};
+
+	window.onload = function() {
+		var p1 = new Pick( "l1", function(c){ api.fadeToColor(1,1,c);} );
+		var p2 = new Pick( "l2", function(c){ api.fadeToColor(2,1,c);} );
+		updateCurrent();
+	};
+	</script>
+</head>
+<body style="margin-top: 350px">
+	<div id="l1" style="width:300px; height:300px; position:absolute; top:0; left:0; border-bottom: 5px solid white"></div>
+	<div id="l2" style="width:300px; height:300px; position:absolute; top:0; left:310px; border-bottom: 5px solid white"></div>
+
+<h2>Current led colors displayed</h2>
+<div id="cled1">&nbsp;</div>
+<div id="cled2">&nbsp;</div>
+<p><button onclick="updateCurrent()">Update</button></p>
+</body>
+</html>

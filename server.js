@@ -150,11 +150,13 @@ var requesthandler = function( request, response ) {
 		'/raphael.js',
 		'/knockout.js',
 		'/colorpicker.js',
+		'/colorpicker.html',
 		'/api.js',
 		'/index.html',
 		'/patterns.html',
 		'/presets.js',
-		'/patterns.js'
+		'/patterns.js',
+		'/settings.html'
 	];
 	
 	if( pathname.length >= 5 && pathname.substr(0,5) === "/api/" )
