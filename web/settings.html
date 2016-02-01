@@ -4,50 +4,70 @@
 	<title>Blink(1) settings</title>
 	<script type="text/javascript" src="api.js" charset="utf-8"></script>
 	<style type="text/css">
-		#leds > span {
-			border: 3px solid white;
-		}
+	#cled1, #cled2 {
+		width: 100px;
+		height: 100px;
+		margin: 20px;
+		border: 2px solid black;
+	}
+
 	</style>
 
 	<script type="text/javascript">
 	var api = new Api();
+	var cgamma = 0;
+	function gammaAdd(){
+		setLocalGamma(cgamma+0.1);
+		api.setGammaValue(cgamma);
+	}
+	
+	function gammaSub(){
+		setLocalGamma(cgamma-0.1);
+		api.setGammaValue(cgamma);
+	}
+	
+	function gammaOff(){
+		setLocalGamma(0);
+		api.setGammaValue(cgamma);
+	}
+	
+	function setLocalGamma(g){
+		document.getElementById("gamma").innerText = "Gamma: "+g;
+		cgamma = g;
+	}
 
 	window.onload = function() {
-		var setC = function(l,s){
-			s.style.borderColor = l;
-			s.innerText = l;
-		};
+
 		api.getCurrentColor( function(l){
-			setC( l.ledA, document.getElementById("led1") );
-			setC( l.ledB, document.getElementById("led2") );
+			document.getElementById("cled1").style.backgroundColor = l.ledA;
+			document.getElementById("cled2").style.backgroundColor = l.ledB;
 		});
 		
 		api.getGammaValue( function(g){
-			document.getElementById("gamma").innerText = "Gamma: "+g.gamma;
+			setLocalGamma(g.gamma);
 		});
 		
 		api.getVersion( function(g){
-			document.getElementById("version").innerText = g;
+			document.getElementById("version").innerText = g.version;
 		});
 	};
 	</script>
 </head>
 
-<body style="margin-top: 350px">
+<body>
 	<p id="status"></p>
 	<p id="version"></p>
-	<p id="leds">Led color A: <span id="led1"></span><br>Led color B: <span id="led2"></span></p>
+	<ul><li id="cled1">&nbsp;</li><li id="cled2">&nbsp;</li></ul>
+
 	<p id="gamma"></p>
-
-	<p>
-		<input id="gammainp" type="range" min="0" max="6" step="0.1" oninput="api.setGammaValue(document.getElementById('gammainp').value)"><span id="gammavalue"></span>
-	</p>
-
+	<button onclick="gammaAdd()">+</button>
+	<button onclick="gammaSub()">-</button>
+	<button onclick="gammaOff()">Off</button>
 
 	<p>
 		<ul>
 			<li><a href="index.html">Home</a></li>
 		</ul>
 	</p>
-	</body>
+</body>
 </html>
