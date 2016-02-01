@@ -2,16 +2,17 @@
 <html>
 <head>
 	<title>Blink(1) - patterns</title>
-	<script type="text/javascript" src="raphael.js" charset="utf-8"></script>
-	<script type="text/javascript" src="colorpicker.js" charset="utf-8"></script>
 	<script type="text/javascript" src="knockout.js" charset="utf-8"></script>
 	<script type="text/javascript" src="api.js" charset="utf-8"></script>
 	<script type="text/javascript" src="presets.js" charset="utf-8"></script>
 	<script type="text/javascript" src="patterns.js" charset="utf-8"></script>
 	<style type="text/css">
-		input{
-			width: 40px
-		}
+	#cled1, #cled2 {
+		width: 100px;
+		height: 100px;
+		margin: 20px;
+		border: 2px solid black;
+	}
 		li{
 			margin: 5px;
 			padding: 5px;
@@ -19,194 +20,72 @@
 			border-color: black;
 			border-width: 0 0 0 1px;
 		}
-		.persist{
-			border-style: solid
-		}
-		.double{
-			transform: scale(1.5);
-		}
 	</style>
 
 	<script type="text/javascript">
-var hexconvert = function(num){
-	var res = num.toString(16);
-	if( num <= 0xf )
-		return "0"+res;
-	return res;
-};
-	
-	function PasteStore(model){
-		this.model = model;
-		this.stored = [];
-	}
-	
-	PasteStore.prototype.copy = function(){
-		this.stored = this.model.patterns()
-			.filter( function(p){ return p.selected() })
-			.map( function(p){ return p.toObject(); } );
-		this.model.canPaste(this.stored.length > 0);
+	var updateCurrent = function(callback){
+		api.getCurrentColor( function(l){
+			document.getElementById("cled1").style.backgroundColor = l.ledA;
+			document.getElementById("cled2").style.backgroundColor = l.ledB;
+			if( callback )
+				callback();
+		});
 	};
-	
-	PasteStore.prototype.paste=function(index){
-		for( var i=0; i<this.stored.length && index+i < this.model.patterns().length; i++)
-		{
-			this.model.patterns()[index+i].setFrom(this.stored[i]);
-		}
-	};
-
-	
 	var model = {
-		patterns: ko.observableArray([]),
-		selected: ko.observable(),
+		selected: ko.observable(presets[0]),
 		presets: ko.observableArray(presets),
-		playtimes: ko.observable(0),
-		playfrom: ko.observable(0),
-		playto:ko.observable(0),
-		canPaste: ko.observable(false),
-		setTimeTo: ko.observable(500),
-		shiftpressed: false,
-		lastindex:-1
-	};
-	var handlemultiselect = function(value,index){
-		if( model.shiftpressed )
-		{
-			if( model.lastindex == -1 )
-				model.lastindex=index;
-			else
-			{
-				var min = Math.min(model.lastindex,index);
-				var max = Math.max(model.lastindex,index);
-				var origst = model.patterns()[model.lastindex].selected()
-				for( var i=min;i<=max;i++)
-				{
-					model.patterns()[i].selected(origst);
-				}
-			}
-		}
-	};
-	
-	document.onkeyup = function()
-	{
-		model.shiftpressed=false;
-		model.lastindex=-1;
-	}
-
-	document.onkeydown = function(event) {
-		var keyCode = (event||window.event).keyCode;
-		if( 16 === keyCode )
-			model.shiftpressed=true;
 	};
 
 	var api = new Api();
-	var picker = undefined;
-	var pastestore = new PasteStore(model);
-	
-	model.settimes = function()
-	{
-		var m = this;
-		this.patterns()
-			.filter( function(p){ return p.selected() })
-			.map( function(p){ p.time(m.setTimeTo()); });
-	}
-	
-	model.clear = function(){
-		this.patterns()
-			.filter( function(p){ return p.selected() })
-			.map( function(p){ p.reset(); });
-	};
-	
-	model.resetDefault = function(){
-		this.selected(this.presets()[0]);
-	};
-	
-	model.saveAll = function(){
-		api.savePatterns(
-			this.patterns().map( function(p){ return p.toObject(); })
-		);
-	};
-	
-	model.saveSelected = function(){
-		api.savePatterns(
-			this.patterns()
-				.filter( function(p){ return p.selected(); } )
-				.map( function(p){ return p.toObject(); })
-		);
-	};
-	
-	model.load = function(){
-		api.readPatterns(function(p){
-			for( var i=0;i<32;i++)
-				model.patterns()[i].setFrom(p[i]);
-			});
-	}
-	model.play = function(){
-		api.play(this.playtimes(),this.playfrom(),this.playto());
-	};
-	model.loop = function(){
-		api.play();
-	};
-	model.pause = function(){
-	api.pause();
-	};
-	
-	model.selected.subscribe(function(s){
-		var startindex = 32-s.lines.length;
-		for( var i = 0;i<32; i++ )
+
+	model.go = function(){
+		var l = [];
+		for( var i = 0; i< 32; i++ )
 		{
-			if( i >= s.lines.length )
-				model.patterns()[i].reset();
-			else
-				model.patterns()[i].setFrom( s.lines[i] );
+			if( i < this.selected().lines.length )
+				l.push( this.selected().lines[i] );
+			else l.push({});
+			l[i].index = i;
 		}
-	});
-	
+		api.savePatterns( l, function(){api.play(0,0,model.selected().lines.length-1)} );
+		var stop = false;
+		window.setTimeout( function(){
+			stop=true;
+		},10000 );
+		function loopUpdate(){
+			updateCurrent(function(){
+				if( !stop )
+					window.setTimeout( loopUpdate, 100 );
+			});
+		};
+		loopUpdate();
+
+	};
 
 	window.onload = function() {
-		picker = new Pick( "colorpicker" );
-		for(var i=0;i<32;i++)
-		{
-			model.patterns.push( new Pattern(
-				{color:"#000000",ledn:0,time:0,index:i},
-				handlemultiselect
-			));
-		}
-		model.load();
-			ko.applyBindings(model);
+		ko.applyBindings(model);
+		updateCurrent();
 	};
+	
 	</script>
 </head>
 
-<body style="margin-top: 350px">
+<body>
 
-<p>
-<button data-bind="click:loop">Loop</button> <button data-bind="click:pause">Stop</button> <br/>
-<button data-bind="click:play">Play</button> <input data-bind="value:playtimes" /> times <br/>
-From <input data-bind="value:playfrom" /> to  <input data-bind="value:playto" /> 
-</p>
+<p><select data-bind="value:selected, options:presets, optionsText:'name', optionsCaption: 'Presets'"></select></p>
+<button data-bind="click:go">Go</button>
 
-<p>
-<button data-bind="click:saveAll">Save all</button> <button data-bind="load">Refresh</button> | <button>persist</button> <button data-bind="click: resetDefault">Reset</button>
-</p>
+<ul><li id="cled1">&nbsp;</li><li id="cled2">&nbsp;</li></ul>
 
-<p><select data-bind="value:selected, options:presets, optionsText:'name', optionsCaption: 'Presets'"></select> | With selected: <button data-bind="click: clear">Clear</button>  <button data-bind="click: saveSelected">Save</button> <button onclick="pastestore.copy()">Copy</button> <button data-bind="click: settimes">set time to</button> <input data-bind="value: setTimeTo"/>
-</p>
+<hr>
 
-<ol start="0" data-bind="foreach: patterns"> 
-	<li data-bind="css: { 'persist': index() <= 16}">
-		<button data-bind="click: grabColorFromPicker">Grab</button> <span data-bind="style:{background:color()}" style="width:10px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-		R: <input data-bind="value: r" />
-		G: <input data-bind="value: g" />
-		B: <input data-bind="value: b" />
-		<select data-bind="value: ledn" >
-			<option value="0">Both leds</option> 
-			<option value="1">Led A</option> 
-			<option value="2">Led B</option>
-		</select> | 
-		<input data-bind="value: time" /> ms | <input class="double" type="checkbox" data-bind="checked: selected" /> <button data-bind="click: reset">Clear</button> <button data-bind="enabled: $parent.canPaste(), click: paste">Paste</button>
-	</li>
-</ol>
-
-<div id="colorpicker" style="width:300px; height:300px; position:absolute; top:0; left:0"></div>
+	<p>
+		<ul>
+			<li><a href="index.html">Home</a></li>
+			<li><a href="patternsadv.html">Advanced pattern creator</a></li>
+			<li><a href="settings.html">Settings</a></li>
+		</ul>
+	</p>
 
 </body>
 </html>

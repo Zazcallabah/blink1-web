@@ -47,11 +47,11 @@
 			function(r){callback(JSON.parse(r));}
 		);
 	};
-	Api.prototype.savePatterns = function( data ) {
+	Api.prototype.savePatterns = function( data, callback ) {
 		webreq(
 			"POST",
 			"/api/patterns",
-			undefined,
+			callback,
 			data
 		);
 	};

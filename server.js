@@ -153,6 +153,7 @@ var requesthandler = function( request, response ) {
 		'/colorpicker.html',
 		'/api.js',
 		'/index.html',
+		'/patternsadv.html',
 		'/patterns.html',
 		'/presets.js',
 		'/patterns.js',
