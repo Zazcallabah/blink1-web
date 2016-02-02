@@ -2,25 +2,13 @@
 <html>
 <head>
 	<title>Blink(1)</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script type="text/javascript" src="raphael.js" charset="utf-8"></script>
 	<script type="text/javascript" src="colorpicker.js" charset="utf-8"></script>
 	<script type="text/javascript" src="api.js" charset="utf-8"></script>
+	<link href="bootstrap.min.css" rel="stylesheet">
 	<style type="text/css">
-	.radio {
-		position: relative;
-		display: block;
-		margin-top: 10px;
-		margin-bottom: 10px;
-	}
-
-	form {
-		display:block;
-		margin:10px;
-		padding:20px;
-	}
-
-	button {
-		font-size: 1.5em;
+	.colorchooser {
 		padding: 1.1em 1.4em;
 		border: 2px solid black;
 		border-radius: 10px;
@@ -28,9 +16,7 @@
 	}
 
 	#cled1, #cled2 {
-		width: 100px;
 		height: 100px;
-		margin: 20px;
 		border: 2px solid black;
 	}
 	</style>
@@ -69,7 +55,7 @@
 		if(colours[i] === "<br>" )
 			str_html += "<br>";
 		else
-			str_html += "<button onclick=\"setColor('"+colours[i]+"')\" style=\"background-color:"+colours[i]+"\"></button>";
+			str_html += "<button class=\"colorchooser\" onclick=\"setColor('"+colours[i]+"')\" style=\"background-color:"+colours[i]+"\"></button>";
 	}
 	document.getElementById("buttonlist").innerHTML = str_html;
 };
@@ -77,33 +63,60 @@
 </head>
 
 <body>
-<h2>Current colors displayed</h2>
-<ul><li id="cled1">&nbsp;</li><li id="cled2">&nbsp;</li></ul>
-<p><button onclick="updateCurrent()">Update</button></p>
 
-<hr>
-
-	<form name="ledchoice">
-		<div class="radio"><label><input type="radio" name="led" value="both" id="ledchoiceboth" checked="checked" /> Both</label></div>
-		<div class="radio"><label><input type="radio" name="led" value="led1" id="ledchoice1" /> Side A</label></div>
-		<div class="radio"><label><input type="radio" name="led" value="led2" id="ledchoice2" /> Side B</label></div>
-	</form>
-
-	<p id="buttonlist">
-	</p>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-5">
+			<h1>Current colors displayed</h1>
+		</div>
+	</div>
+	<div class="row">&nbsp;</div>
+	<div class="row">
+		<div class="col-md-1"></div>
+		<div id="cled1" class="col-md-1">&nbsp;</div>
+		<div class="col-md-1"></div>
+		<div id="cled2" class="col-md-1">&nbsp;</div>
+		<div class="col-md-1"></div>
+	</div>
+	<div class="row">
+		<div class="col-md-1">
+			<button onclick="updateCurrent()" class="btn btn-default">Update</button>
+		</div>
+	</div>
+	<div class="row">&nbsp;</div>
+	<hr>
+	<div class="row"><div class="col-md-2"><h2>Change color</h2></div></div>
+	<div class="row">&nbsp;</div>
 	
-	<p>
-		<button onclick="api.togl(500)">Togl Quick</button>
-		<button onclick="api.togl(5000)">Togl Slow</button>
-		<button onclick="api.fade(2000)">Fade</button><br/>
-	</p>
+	<div class="row">
+		<div class="col-md-5">
+			<form class="form-horizontal">
+				<div class="radio"><label><input type="radio" name="led" value="both" id="ledchoiceboth" checked="checked" /> Both sides</label></div>
+				<div class="radio"><label><input type="radio" name="led" value="led1" id="ledchoice1" /> Side A</label></div>
+				<div class="radio"><label><input type="radio" name="led" value="led2" id="ledchoice2" /> Side B</label></div>
+			</form>
+		</div>
+	</div>
+	<div class="row">&nbsp;</div>
 
-	<p>
-		<ul>
+	<div class="row"><div class="col-md-12" id="buttonlist"></div></div>
+	<div class="row">&nbsp;</div>
+	
+	<div class="row"><div class="col-md-3">
+		<button onclick="api.togl(500)" class="btn btn-default">Togl Quick</button>
+		<button onclick="api.togl(5000)" class="btn btn-default">Togl Slow</button>
+		<button onclick="api.fade(2000)" class="btn btn-default">Fade</button>
+	</div></div>
+	<div class="row">&nbsp;</div>
+
+	<div class="row">
+		<div class="col-md-5">
+			<ul>
 			<li><a href="colorpicker.html">Color picker</a></li>
 			<li><a href="patterns.html">Patterns</a></li>
 			<li><a href="settings.html">Settings</a></li>
-		</ul>
-	</p>
+			</ul>
+		</div>
+	</div>
 	</body>
 </html>
