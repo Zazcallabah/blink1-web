@@ -18,6 +18,7 @@ param {speed:500}
 returns ack
 
 */
+var tools = new (require('./tools.js'))();
 
 function Control(blink)
 {
@@ -33,7 +34,7 @@ Control.prototype.play = function( p, response ){
 	if( start > end )
 		start = end;
 
-	console.log( "playLoop("+start+", "+end+", "+count+")" );
+	tools.log( "playLoop("+start+", "+end+", "+count+")" );
 	this.blink().playLoop({play: 1, start:start, end:end, count:count});
 
 	response.writeHead(200);
@@ -46,7 +47,7 @@ Control.prototype.togl = function( p, response ){
 	var speed = p.speed || 500;
 	var blnk = this.blink();
 
-	console.log( "togl with speed "+speed );
+	tools.log( "togl with speed "+speed );
 
 	blnk.readRGB( {ledn:1, callback:function(l1){
 		blnk.readRGB( {ledn:2, callback:function(l2){
@@ -70,7 +71,7 @@ Control.prototype.togl = function( p, response ){
 Control.prototype.slowTogl = function( p, response ){
 	var speed = p.speed || 5000;
 	var blnk = this.blink();
-	console.log( "slowtogl with speed "+speed );
+	tools.log( "slowtogl with speed "+speed );
 	blnk.readRGB( {ledn:1, callback:function(l1){
 		blnk.readRGB( {ledn:2, callback:function(l2){
 			blnk.fadeRGB({fadeMillis:speed, r:l2.r, g:l2.g, b:l2.b, ledn:1} );
@@ -84,7 +85,7 @@ Control.prototype.slowTogl = function( p, response ){
 
 Control.prototype.pause = function( p, response ){
 
-	console.log( "pause" );
+	tools.log( "pause" );
 	this.blink().pause();
 
 	response.writeHead(200);

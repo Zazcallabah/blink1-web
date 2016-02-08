@@ -13,6 +13,7 @@ index is pattern line [0-31]
 returns ack
 
 */
+var tools = new (require('./tools.js'))();
 
 function Patterns(blink)
 {
@@ -20,12 +21,7 @@ function Patterns(blink)
 	this.href = "/api/patterns";
 };
 
-function hexconvert(num){
-	var res = num.toString(16);
-	if( num <= 0xf )
-		return "0"+res;
-	return res;
-};
+
 
 Patterns.prototype.get = function(response){
 	var count = 32;
@@ -33,10 +29,7 @@ Patterns.prototype.get = function(response){
 	var callback = function(data,i){
 		var pattern = {
 			ledn: data.ledn,
-			color:  "#" + 
-				hexconvert(data.r) + 
-				hexconvert(data.g) + 
-				hexconvert(data.b),
+			color: tools.toColor(data.r,data.g,data.b),
 			time: data.fadeMillis,
 			index: i
 		};
@@ -71,7 +64,7 @@ Patterns.prototype.post = function( patterns, response ){
 		var time  = parseInt(patterns[i].time || 0, 10);
 		var hexcolor = patterns[i].color || "#000000";
 		//check hexcolor valid data
-		console.log( "writePatternLine {time: "+time+", ledn: "+ledn+", color: "+hexcolor+", index: "+index+"}" );
+		tools.log( "writePatternLine {time: "+time+", ledn: "+ledn+", color: "+hexcolor+", index: "+index+"}" );
 		var r = parseInt(hexcolor.substr(1,2),16);
 		var g = parseInt(hexcolor.substr(3,2),16);
 		var b = parseInt(hexcolor.substr(5,2),16);

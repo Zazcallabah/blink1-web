@@ -11,6 +11,7 @@ param {gamma:0}
 in both cases, gamma=0 means no gamma correction
 
 */
+var tools = new (require('./tools.js'))();
 
 function Gamma(blink)
 {
@@ -29,7 +30,7 @@ Gamma.prototype.get = function(response){
 
 Gamma.prototype.post = function(instruction, response){
 	var gamma = instruction.gamma || 0;
-	console.log( "set gamma to "+gamma );
+	tools.log( "set gamma to "+gamma );
 	this.blink().setgamma( {gamma:gamma} );
 
 	response.writeHead(200);

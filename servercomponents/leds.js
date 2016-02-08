@@ -12,6 +12,7 @@ time is in milliseconds
 returns ack
 
 */
+var tools = new (require('./tools.js'))();
 
 function Leds(blink)
 {
@@ -19,25 +20,12 @@ function Leds(blink)
 	this.href = "/api/leds";
 };
 
-function hexconvert(num){
-	var res = num.toString(16);
-	if( num <= 0xf )
-		return "0"+res;
-	return res;
-};
-
-function toColor(r,g,b){
- return "#" + 
-	hexconvert(r) + 
-	hexconvert(g) + 
-	hexconvert(b);
-};
 
 Leds.prototype.get = function(response){
 	var blnk = this.blink();
 	var writeResponse = function(c1, c2){
-		var l1 = toColor( c1.r, c1.g, c1.b );
-		var l2 = toColor( c2.r, c2.g, c2.b );
+		var l1 = tools.toColor( c1.r, c1.g, c1.b );
+		var l2 = tools.toColor( c2.r, c2.g, c2.b );
 	
 		response.writeHead(200);
 		response.write( JSON.stringify( {ledA:l1,ledB:l2} ) );
@@ -60,11 +48,11 @@ Leds.prototype.post = function(instruction, response){
 	var b = parseInt(hexcolor.substr(5,2),16);
 	
 	this.blink().fadeRGB( {fadeMillis:time,r: r,g: g,b: b, ledn:ledn, callback:function(opt){
-		var raw = toColor( Math.round(opt.r), Math.round(opt.g), Math.round(opt.b) );
-		console.log( "fadeToRGB {time: "+time+", ledn: "+ledn+", color: "+hexcolor+", raw: "+raw+"}" );
-	response.writeHead(200);
-	response.write( "set led "+ledn+" to "+hexcolor+ " (raw: "+ raw +") over "+time+"ms" );
-	response.end();
+		var raw = tools.toColor( Math.round(opt.r), Math.round(opt.g), Math.round(opt.b) );
+		tools.log( "fadeToRGB {time: "+time+", ledn: "+ledn+", color: "+hexcolor+", raw: "+raw+"}" );
+		response.writeHead(200);
+		response.write( "set led "+ledn+" to "+hexcolor+ " (raw: "+ raw +") over "+time+"ms" );
+		response.end();
 	}});
 
 };

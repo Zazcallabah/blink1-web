@@ -4,6 +4,7 @@ var http = require("http"),
 	url = require("url"),
 	fs = require("fs"),
 	Blink1 = require('node-blink1'),
+	Tools = require('./servercomponents/tools.js'),
 	Leds = require('./servercomponents/leds.js'),
 	Patterns = require('./servercomponents/patterns.js'),
 	Control = require('./servercomponents/control.js'),
@@ -22,13 +23,7 @@ var leds = new Leds(blink);
 var patterns = new Patterns(blink);
 var control = new Control(blink);
 var gamma = new Gamma(blink);
-
-var hexconvert = function(num){
-	var res = num.toString(16);
-	if( num <= 0xf )
-		return "0"+res;
-	return res;
-};
+var tools = new Tools();
 
 var parseRequest = function(request, callback){
 	var queryData = "";
@@ -50,7 +45,7 @@ var parseRequest = function(request, callback){
 		} catch( e )
 		{
 			_blink=undefined;
-			console.log(e);
+			tools.log(e);
 			callback();
 		}
 	});
@@ -171,7 +166,7 @@ var requesthandler = function( request, response ) {
 			}
 			catch(e)
 			{
-				console.log(e);
+				tools.log(e);
 				response.writeHead(500, {"Content-Type": "text/plain"});
 				response.write( e.toString() );
 				response.end();
@@ -188,13 +183,13 @@ var requesthandler = function( request, response ) {
 
 		fs.readFile(__dirname+'/web'+pathname, "binary", function(err, file) {
 			if(err) {        
-				console.log("500: "+pathname);
+				tools.log("500: "+pathname);
 				response.writeHead(500, {"Content-Type": "text/plain"});
 				response.write(err + "\n");
 				response.end();
 				return;
 			}
-			console.log("200: "+pathname);
+			tools.log("200: "+pathname);
 			response.writeHead(200);
 			response.write(file, "binary");
 			response.end();
