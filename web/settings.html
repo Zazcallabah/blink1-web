@@ -44,26 +44,52 @@
 		});
 		
 		api.getGammaValue( function(g){
-			setLocalGamma(g.gamma);
+			setLocalGamma( g.gamma || "Off" );
 		});
 		
 		api.getVersion( function(g){
 			document.getElementById("version").innerText = g.version;
+		});
+		
+		api.getStatus( function(g){
+			var str = "";
+			if( g.playing != 1 )
+				str += "Not playing.<br>";
+			else str += "Playing.<br>";
+			
+			str += "Pattern start index: "+g.start+"<br>";
+			str += "Pattern end index: "+g.end+"<br>";
+			str += "Loop countdown: "+g.count+"<br>";
+			str += "Active index: "+g.position+"<br>";
+		
+			document.getElementById("status").innerHTML = str;
 		});
 	};
 	</script>
 </head>
 
 <body>
+
+	<h3>Current status</p>
 	<p id="status"></p>
+	<p>&nbsp;</p>
+	
+	<h3>Firmware version</h3>
 	<p id="version"></p>
+	<p>&nbsp;</p>
+
+	<h3>Current colors</h3>
 	<ul><li id="cled1">&nbsp;</li><li id="cled2">&nbsp;</li></ul>
 
-	<p id="gamma"></p>
+	<h3>Gamma correction value</h3>
+	<p id="gamma">Off</p>
+
+
 	<button onclick="gammaAdd()">+</button>
 	<button onclick="gammaSub()">-</button>
 	<button onclick="gammaOff()">Off</button>
 
+	<hr>
 	<p>
 		<ul>
 			<li><a href="index.html">Home</a></li>

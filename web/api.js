@@ -30,6 +30,14 @@
 		);
 	};
 	
+	Api.prototype.getStatus = function(callback) {
+		webreq(
+			"GET",
+			"/api/status",
+			function(r){ callback(JSON.parse(r)); }
+		);
+	};
+	
 	// ledn = {0,1,2}, time in ms, color is hexcolor
 	Api.prototype.fadeToColor = function(ledn,time,color) {
 		webreq(
