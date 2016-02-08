@@ -151,6 +151,7 @@ var requesthandler = function( request, response ) {
 		'/knockout.js',
 		'/colorpicker.js',
 		'/colorpicker.html',
+		'/bootstrap.min.css',
 		'/api.js',
 		'/index.html',
 		'/patternsadv.html',
