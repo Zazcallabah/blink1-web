@@ -2,6 +2,11 @@
 
 Node-hosted web interface for blink1 that uses node-blink1 and node-hid to communicate with the device.
 
+![Quick change color](scr_1.png)]
+![Predefined patterns](scr_2.png)]
+![Color picker](scr_3.png)]
+
+
 ## Prerequisites
 
 * python 2.7.3 - if you have later versions of python you may have to do tricksy things with your path variable
