@@ -14,75 +14,77 @@
 	
 	function Api(){};
 		// callback param: {ledA:"#000000",ledB:"#000000"}
-	Api.prototype.getCurrentColor = function(callback) {
+	Api.prototype.getCurrentColor = function(callback,device) {
 		webreq(
 			"GET",
-			"/api/leds",
+			"/api/leds/" + (device||0),
 			function(r){ callback(JSON.parse(r)); }
 		);
 	};
 
-	Api.prototype.getVersion = function(callback) {
+	Api.prototype.getVersion = function(callback,device) {
 		webreq(
 			"GET",
-			"/api/version",
+			"/api/version/" + (device||0),
 			function(r){ callback(JSON.parse(r)); }
 		);
 	};
 	
-	Api.prototype.getStatus = function(callback) {
+	Api.prototype.getStatus = function(callback,device) {
 		webreq(
 			"GET",
-			"/api/status",
+			"/api/status/" + (device||0),
 			function(r){ callback(JSON.parse(r)); }
 		);
 	};
 	
 	// ledn = {0,1,2}, time in ms, color is hexcolor
-	Api.prototype.fadeToColor = function(ledn,time,color) {
+	Api.prototype.fadeToColor = function(ledn,time,color,device) {
 		webreq(
 			"POST",
-			"/api/leds",
+			"/api/leds/" + (device||0),
 			undefined,
 			{ledn: ledn, time: time, color: color}
 		);
 	};
 	
-	Api.prototype.readPatterns = function( callback ) {
+	Api.prototype.readPatterns = function( callback,device ) {
 		webreq(
 			"GET",
-			"/api/patterns",
+			"/api/patterns/" + (device||0),
 			function(r){callback(JSON.parse(r));}
 		);
 	};
 	Api.prototype.savePatterns = function( data, callback ) {
 		webreq(
 			"POST",
-			"/api/patterns",
+			"/api/patterns/" + (device||0),
 			callback,
 			data
 		);
 	};
 	
-	Api.prototype.setGammaValue = function( val ){
+	Api.prototype.setGammaValue = function( val, device ){
 		webreq(
 			"POST",
-			"/api/gamma",
+			"/api/gamma/" + (device||0),
 			undefined,
-			{ gamma: val || 0 });
+			{ gamma: val || 0 }
+		);
 	};
 	
-	Api.prototype.getGammaValue = function( val ){
+	Api.prototype.getGammaValue = function( val,device ){
 		webreq(
 			"GET",
-			"/api/gamma",
-			function(r){ callback(JSON.parse(r)); });
+			"/api/gamma/" + (device||0),
+			function(r){ callback(JSON.parse(r)); }
+		);
 	};
 	
-	Api.prototype.play = function(count,start,end){
+	Api.prototype.play = function(count,start,end,device){
 		webreq(
 			"POST",
-			"/api/control/play",
+			"/api/control/play/" + (device||0),
 			undefined,
 			{
 				count: count || 0,
@@ -90,25 +92,26 @@
 				end:     end || 0
 			});
 		};
-	Api.prototype.pause = function(){
+	Api.prototype.pause = function(device){
 		webreq(
 			"POST",
-			"/api/control/pause"
-			);
+			"/api/control/pause/" + (device||0),
+			undefined
+		);
 	};
 	
-	Api.prototype.togl = function(ms) {
+	Api.prototype.togl = function(ms,device) {
 		webreq(
 			"POST",
-			"/api/control/togl",
+			"/api/control/togl/" + (device||0),
 			undefined,
 			{speed:parseInt(ms,10)}
 		);
 	};
-	Api.prototype.fade = function(ms) {
+	Api.prototype.fade = function(ms,device) {
 		webreq(
 			"POST",
-			"/api/control/slowtogl",
+			"/api/control/slowtogl/" + (device||0),
 			undefined,
 			{speed:parseInt(ms,10)}
 		);
