@@ -19,8 +19,8 @@ function Gamma(blink)
 	this.href = "/api/gamma";
 };
 
-Gamma.prototype.get = function(response){
-	var blnk = this.blink();
+Gamma.prototype.get = function(request,response){
+	var blnk = this.blink(request.device);
 	blnk.getgamma({ callback: function(opt){
 		response.writeHead(200);
 		response.write( JSON.stringify( opt ) );
@@ -31,7 +31,7 @@ Gamma.prototype.get = function(response){
 Gamma.prototype.post = function(instruction, response){
 	var gamma = instruction.gamma || 0;
 	tools.log( "set gamma to "+gamma );
-	this.blink().setgamma( {gamma:gamma} );
+	this.blink(request.device).setgamma( {gamma:gamma} );
 
 	response.writeHead(200);
 	response.write( "set gamma to "+gamma );

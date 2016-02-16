@@ -35,7 +35,7 @@ Control.prototype.play = function( p, response ){
 		start = end;
 
 	tools.log( "playLoop("+start+", "+end+", "+count+")" );
-	this.blink().playLoop({play: 1, start:start, end:end, count:count});
+	this.blink(p.device).playLoop({play: 1, start:start, end:end, count:count});
 
 	response.writeHead(200);
 	response.write( "playing" );
@@ -45,7 +45,7 @@ Control.prototype.play = function( p, response ){
 Control.prototype.togl = function( p, response ){
 
 	var speed = p.speed || 500;
-	var blnk = this.blink();
+	var blnk = this.blink(p.device);
 
 	tools.log( "togl with speed "+speed );
 
@@ -70,7 +70,7 @@ Control.prototype.togl = function( p, response ){
 
 Control.prototype.slowTogl = function( p, response ){
 	var speed = p.speed || 5000;
-	var blnk = this.blink();
+	var blnk = this.blink(p.device);
 	tools.log( "slowtogl with speed "+speed );
 	blnk.readRGB( {ledn:1, callback:function(l1){
 		blnk.readRGB( {ledn:2, callback:function(l2){
@@ -86,7 +86,7 @@ Control.prototype.slowTogl = function( p, response ){
 Control.prototype.pause = function( p, response ){
 
 	tools.log( "pause" );
-	this.blink().pause();
+	this.blink(p.device).pause();
 
 	response.writeHead(200);
 	response.write( "paused" );

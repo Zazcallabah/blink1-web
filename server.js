@@ -11,12 +11,10 @@ var http = require("http"),
 	Gamma = require('./servercomponents/gamma.js');
 
 var _blink = undefined;
-var blink = function(serial){
-	if( !_blink )
-	{
-		_blink = new Blink1();
-	}
-	return _blink;
+var blink = function(index){
+	if( !index )
+		return new Blink1();
+	return new Blink1( Blink1.devices()[index] );
 }
 
 var leds = new Leds(blink);
@@ -53,7 +51,7 @@ var parseRequest = function(request, callback){
 
 var splitVerb = function(request,response,controller) {
 	if( request.method === 'GET' ) {
-		controller.get(response);
+		controller.get(request,response);
 	}
 	else if( request.method === 'POST' ) {
 		parseRequest( request, function(data){
@@ -92,7 +90,7 @@ var controlAction = function( request, response, action ) {
 * returns { playing: [0/1], start:[0-31], end:[0-31], count: 0, position: 0-31 }
 */
 var getStatus = function(req,response){
-	blink().readPlayState(function(s){
+	blink(req.device).readPlayState(function(s){
 	response.writeHead(200);
 		response.write( JSON.stringify( {
 			playing: s.playing,
@@ -111,7 +109,7 @@ var getStatus = function(req,response){
 * returns {version:"versionstring"}
 */
 var getVersion = function(req,response){
-	blink().version(function(v){
+	blink(req.device).version(function(v){
 		response.writeHead(200);
 		response.write( JSON.stringify( {version:v} ) );
 		response.end();

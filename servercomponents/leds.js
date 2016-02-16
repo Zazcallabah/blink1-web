@@ -21,8 +21,8 @@ function Leds(blink)
 };
 
 
-Leds.prototype.get = function(response){
-	var blnk = this.blink();
+Leds.prototype.get = function(request,response){
+	var blnk = this.blink(request.device);
 	var writeResponse = function(c1, c2){
 		var l1 = tools.toColor( c1.r, c1.g, c1.b );
 		var l2 = tools.toColor( c2.r, c2.g, c2.b );
@@ -47,7 +47,7 @@ Leds.prototype.post = function(instruction, response){
 	var g = parseInt(hexcolor.substr(3,2),16);
 	var b = parseInt(hexcolor.substr(5,2),16);
 	
-	this.blink().fadeRGB( {fadeMillis:time,r: r,g: g,b: b, ledn:ledn, callback:function(opt){
+	this.blink(request.device).fadeRGB( {fadeMillis:time,r: r,g: g,b: b, ledn:ledn, callback:function(opt){
 		var raw = tools.toColor( Math.round(opt.r), Math.round(opt.g), Math.round(opt.b) );
 		tools.log( "fadeToRGB {time: "+time+", ledn: "+ledn+", color: "+hexcolor+", raw: "+raw+"}" );
 		response.writeHead(200);
