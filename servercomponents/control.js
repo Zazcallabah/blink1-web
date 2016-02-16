@@ -25,7 +25,7 @@ function Control(blink)
 	this.blink = blink;
 };
 
-Control.prototype.play = function( p, response ){
+Control.prototype.play = function( p, response, device ){
 	
 	var start = parseInt( p.start || 0, 10 );
 	var end =  parseInt( p.end || 0, 10 );
@@ -35,17 +35,17 @@ Control.prototype.play = function( p, response ){
 		start = end;
 
 	tools.log( "playLoop("+start+", "+end+", "+count+")" );
-	this.blink(p.device).playLoop({play: 1, start:start, end:end, count:count});
+	this.blink(device).playLoop({play: 1, start:start, end:end, count:count});
 
 	response.writeHead(200);
 	response.write( "playing" );
 	response.end();
 };
 
-Control.prototype.togl = function( p, response ){
+Control.prototype.togl = function( p, response,device ){
 
 	var speed = p.speed || 500;
-	var blnk = this.blink(p.device);
+	var blnk = this.blink(device);
 
 	tools.log( "togl with speed "+speed );
 
@@ -68,9 +68,9 @@ Control.prototype.togl = function( p, response ){
 	}});
 };
 
-Control.prototype.slowTogl = function( p, response ){
+Control.prototype.slowTogl = function( p, response,device ){
 	var speed = p.speed || 5000;
-	var blnk = this.blink(p.device);
+	var blnk = this.blink(device);
 	tools.log( "slowtogl with speed "+speed );
 	blnk.readRGB( {ledn:1, callback:function(l1){
 		blnk.readRGB( {ledn:2, callback:function(l2){
@@ -83,10 +83,10 @@ Control.prototype.slowTogl = function( p, response ){
 	}});
 };
 
-Control.prototype.pause = function( p, response ){
+Control.prototype.pause = function( p, response,device ){
 
 	tools.log( "pause" );
-	this.blink(p.device).pause();
+	this.blink(device).pause();
 
 	response.writeHead(200);
 	response.write( "paused" );

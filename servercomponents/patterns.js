@@ -23,7 +23,7 @@ function Patterns(blink)
 
 
 
-Patterns.prototype.get = function(request,response){
+Patterns.prototype.get = function(request,response,device){
 	var count = 32;
 	var patterns = [];
 	var callback = function(data,i){
@@ -43,18 +43,18 @@ Patterns.prototype.get = function(request,response){
 			return;
 		}
 	};
-	var blnk = this.blink(request.device);
+	var blnk = this.blink(device);
 	for( var i = 0; i<=31; i++ )
 		blnk.readPatternLine( {lineIndex:i, callback:function(c){callback(c,i);}} );
 };
 
-Patterns.prototype.post = function( patterns, response ){
+Patterns.prototype.post = function( patterns, response,device ){
 	
 	if( ! patterns.length )
 		return;
 
 	// first make sure led isnt playing
-	var blnk = this.blink(request.device);
+	var blnk = this.blink(device);
 	blnk.pause();
 	
 	for( var i=0; i<patterns.length; i++ )
