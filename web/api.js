@@ -1,5 +1,7 @@
 
-	function webreq(verb,href,callback,postdata) {
+	function Api(){};
+	
+	Api.prototype.webreq = function (verb,href,callback,postdata) {
 		var xmlhttp = new XMLHttpRequest();
 		if( callback ) {
 			xmlhttp.onreadystatechange = function() {
@@ -11,11 +13,9 @@
 		
 		xmlhttp.send( postdata ? JSON.stringify(postdata) : "" );
 	}
-	
-	function Api(){};
 		// callback param: {ledA:"#000000",ledB:"#000000"}
 	Api.prototype.getCurrentColor = function(callback,device) {
-		webreq(
+		this.webreq(
 			"GET",
 			"/api/leds/" + (device||0),
 			function(r){ callback(JSON.parse(r)); }
@@ -23,7 +23,7 @@
 	};
 
 	Api.prototype.getVersion = function(callback,device) {
-		webreq(
+		this.webreq(
 			"GET",
 			"/api/version/" + (device||0),
 			function(r){ callback(JSON.parse(r)); }
@@ -31,7 +31,7 @@
 	};
 	
 	Api.prototype.getStatus = function(callback,device) {
-		webreq(
+		this.webreq(
 			"GET",
 			"/api/status/" + (device||0),
 			function(r){ callback(JSON.parse(r)); }
@@ -40,7 +40,7 @@
 	
 	// ledn = {0,1,2}, time in ms, color is hexcolor
 	Api.prototype.fadeToColor = function(ledn,time,color,device) {
-		webreq(
+		this.webreq(
 			"POST",
 			"/api/leds/" + (device||0),
 			undefined,
@@ -49,14 +49,14 @@
 	};
 	
 	Api.prototype.readPatterns = function( callback,device ) {
-		webreq(
+		this.webreq(
 			"GET",
 			"/api/patterns/" + (device||0),
 			function(r){callback(JSON.parse(r));}
 		);
 	};
 	Api.prototype.savePatterns = function( data, callback, device ) {
-		webreq(
+		this.webreq(
 			"POST",
 			"/api/patterns/" + (device||0),
 			callback,
@@ -65,7 +65,7 @@
 	};
 	
 	Api.prototype.setGammaValue = function( val, device ){
-		webreq(
+		this.webreq(
 			"POST",
 			"/api/gamma/" + (device||0),
 			undefined,
@@ -74,7 +74,7 @@
 	};
 	
 	Api.prototype.getGammaValue = function( val,device ){
-		webreq(
+		this.webreq(
 			"GET",
 			"/api/gamma/" + (device||0),
 			function(r){ callback(JSON.parse(r)); }
@@ -82,7 +82,7 @@
 	};
 	
 	Api.prototype.play = function(count,start,end,device){
-		webreq(
+		this.webreq(
 			"POST",
 			"/api/control/play/" + (device||0),
 			undefined,
@@ -93,7 +93,7 @@
 			});
 		};
 	Api.prototype.pause = function(device){
-		webreq(
+		this.webreq(
 			"POST",
 			"/api/control/pause/" + (device||0),
 			undefined
@@ -101,7 +101,7 @@
 	};
 	
 	Api.prototype.togl = function(ms,device) {
-		webreq(
+		this.webreq(
 			"POST",
 			"/api/control/togl/" + (device||0),
 			undefined,
@@ -109,7 +109,7 @@
 		);
 	};
 	Api.prototype.fade = function(ms,device) {
-		webreq(
+		this.webreq(
 			"POST",
 			"/api/control/slowtogl/" + (device||0),
 			undefined,

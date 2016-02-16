@@ -4,5 +4,16 @@
   "version": "0.0.1",
   "dependencies": {
     "node-blink1": "git+https://github.com/Zazcallabah/node-blink1.git"
+  },
+  "scripts": {
+    "test": " mocha && karma start --single-run"
+  },
+  "devDependencies": {
+    "karma": "~0.10.9",
+    "karma-jasmine": "~0.1.5",
+    "karma-phantomjs-launcher": "~0.1",
+    "mocha":"2.4.5",
+    "chai":"3.2.0",
+    "chai-http":"1.0.0"
   }
 }
