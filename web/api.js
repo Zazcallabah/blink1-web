@@ -55,7 +55,7 @@
 			function(r){callback(JSON.parse(r));}
 		);
 	};
-	Api.prototype.savePatterns = function( data, callback ) {
+	Api.prototype.savePatterns = function( data, callback, device ) {
 		webreq(
 			"POST",
 			"/api/patterns/" + (device||0),
