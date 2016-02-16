@@ -16,7 +16,7 @@
 		font-size: 1.5em;
 	}
 
-	#cled1, #cled2 {
+	#cled1, #cled2, #cled11, #cled12 {
 		height: 100px;
 		border: 2px solid black;
 	}
@@ -27,12 +27,7 @@
 	
 	function setColor( c ) {
 		var selected = document.ledchoice.led.value;
-		var l = 0;
-		if( selected === "led1" )
-			l = 1;
-		else if( selected === "led2" )
-			l = 2;
-		api.fadeToColor( l, 1, c );
+		api.fadeToColor( parseInt( selected, 10) || 0, 100, c, parseInt(  document.devchoice.dev.value ,10) || 0);
 	}
 	
 
@@ -40,7 +35,11 @@
 		api.getCurrentColor( function(l){
 			document.getElementById("cled1").style.backgroundColor = l.ledA;
 			document.getElementById("cled2").style.backgroundColor = l.ledB;
-		});
+		}, 0);
+		api.getCurrentColor( function(l){
+			document.getElementById("cled11").style.backgroundColor = l.ledA;
+			document.getElementById("cled12").style.backgroundColor = l.ledB;
+		}, 1);
 	};
 
 	window.onload = function() {
@@ -77,6 +76,10 @@
 		<div id="cled1" class="col-md-1">&nbsp;</div>
 		<div class="col-md-1"></div>
 		<div id="cled2" class="col-md-1">&nbsp;</div>
+		<div class="col-md-2"></div>
+		<div id="cled11" class="col-md-1">&nbsp;</div>
+		<div class="col-md-1"></div>
+		<div id="cled12" class="col-md-1">&nbsp;</div>
 		<div class="col-md-1"></div>
 	</div>
 	<div class="row">
@@ -92,9 +95,15 @@
 	<div class="row">
 		<div class="col-md-5">
 			<form class="form-horizontal" name="ledchoice">
-				<div class="radio"><label><input type="radio" name="led" value="both" id="ledchoiceboth" checked="checked" /> Both sides</label></div>
-				<div class="radio"><label><input type="radio" name="led" value="led1" id="ledchoice1" /> Side A</label></div>
-				<div class="radio"><label><input type="radio" name="led" value="led2" id="ledchoice2" /> Side B</label></div>
+				<div class="radio"><label><input type="radio" name="led" value="0" id="ledchoiceboth" checked="checked" /> Both sides</label></div>
+				<div class="radio"><label><input type="radio" name="led" value="1" id="ledchoice1" /> Side A</label></div>
+				<div class="radio"><label><input type="radio" name="led" value="2" id="ledchoice2" /> Side B</label></div>
+			</form>
+		</div>
+		<div class="col-md-5">
+			<form class="form-horizontal" name="devchoice">
+				<div class="radio"><label><input type="radio" name="dev" value="0" id="d1" checked="checked" /> Device A</label></div>
+				<div class="radio"><label><input type="radio" name="dev" value="1" id="d2" /> Device B</label></div>
 			</form>
 		</div>
 	</div>
@@ -104,9 +113,9 @@
 	<div class="row">&nbsp;</div>
 	
 	<div class="row"><div class="col-md-3">
-		<button onclick="api.togl(500)" class="btn btn-default">Togl Quick</button>
-		<button onclick="api.togl(5000)" class="btn btn-default">Togl Slow</button>
-		<button onclick="api.fade(2000)" class="btn btn-default">Fade</button>
+		<button onclick="api.togl(500,parseInt( document.devchoice.dev.value,10) || 0)" class="btn btn-default">Togl Quick</button>
+		<button onclick="api.togl(5000,parseInt( document.devchoice.dev.value,10) || 0)" class="btn btn-default">Togl Slow</button>
+		<button onclick="api.fade(2000,parseInt( document.devchoice.dev.value,10) || 0)" class="btn btn-default">Fade</button>
 	</div></div>
 	<div class="row">&nbsp;</div>
 
