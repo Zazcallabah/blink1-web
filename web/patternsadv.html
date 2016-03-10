@@ -148,6 +148,9 @@ var hexconvert = function(num){
 	model.pause = function(){
 	api.pause();
 	};
+	model.persist = function(){
+	api.persist();
+	};
 	
 	model.selected.subscribe(function(s){
 		var startindex = 32-s.lines.length;
@@ -185,7 +188,7 @@ From <input data-bind="value:playfrom" /> to  <input data-bind="value:playto" />
 </p>
 
 <p>
-<button data-bind="click:saveAll">Save all</button> <button data-bind="load">Refresh</button> | <button>persist</button> <button data-bind="click: resetDefault">Reset</button>
+<button data-bind="click:saveAll">Save all</button> <button data-bind="load">Refresh</button> | <button data-bind="click: persist">persist</button> <button data-bind="click: resetDefault">Reset</button>
 </p>
 
 <p><select data-bind="value:selected, options:presets, optionsText:'name', optionsCaption: 'Presets'"></select> | With selected: <button data-bind="click: clear">Clear</button>  <button data-bind="click: saveSelected">Save</button> <button onclick="pastestore.copy()">Copy</button> <button data-bind="click: settimes">set time to</button> <input data-bind="value: setTimeTo"/>

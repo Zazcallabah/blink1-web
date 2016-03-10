@@ -100,6 +100,14 @@
 		);
 	};
 	
+	Api.prototype.persist = function(device){
+		this.webreq(
+			"POST",
+			"/api/control/persist/" + (device||0),
+			undefined
+		);
+	};
+	
 	Api.prototype.togl = function(ms,device) {
 		this.webreq(
 			"POST",

@@ -83,6 +83,15 @@ Control.prototype.slowTogl = function( p, response,device ){
 	}});
 };
 
+Control.prototype.persist = function( p, response, device){
+	tools.log("persist");
+	this.blink(device).persistPatternLine();
+	response.writeHead(200);
+	response.write( "persisted" );
+	response.end();
+};
+
+
 Control.prototype.pause = function( p, response,device ){
 
 	tools.log( "pause" );
