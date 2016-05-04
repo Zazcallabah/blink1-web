@@ -152,6 +152,7 @@ var requesthandler = function( request, response ) {
 		'/raphael.js',
 		'/knockout.js',
 		'/colorpicker.js',
+		'/Colour.js',
 		'/colorpicker.html',
 		'/bootstrap.min.css',
 		'/api.js',
