@@ -1,0 +1,6 @@
+open scp://pi@blink1
+cd blink1-web
+put .\server.js
+synchronize remote web web
+synchronize remote servercomponents servercomponents
+exit

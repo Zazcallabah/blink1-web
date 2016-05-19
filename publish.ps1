@@ -1,0 +1,1 @@
+c:/Users/peter.hamberg/Apps/WinSCP/WinSCP.exe /script="sync.scp" /console
