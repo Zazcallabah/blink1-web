@@ -8,7 +8,8 @@ var http = require("http"),
 	Leds = require('./servercomponents/leds.js'),
 	Patterns = require('./servercomponents/patterns.js'),
 	Control = require('./servercomponents/control.js'),
-	Gamma = require('./servercomponents/gamma.js');
+	Gamma = require('./servercomponents/gamma.js'),
+	Slack = require('./servercomponents/slack.js');
 
 var _blink = [];
 var blink = function(index){
@@ -25,6 +26,7 @@ var leds = new Leds(blink);
 var patterns = new Patterns(blink);
 var control = new Control(blink);
 var gamma = new Gamma(blink);
+var slack = new Slack(blink);
 var tools = new Tools();
 
 var parseRequest = function(request, callback){
@@ -131,6 +133,7 @@ var getVersion = function(req,response,device){
 var apiCallMap = {
 	"/api/leds": function(req,resp,dev){ splitVerb(req,resp,dev,leds); }, 
 	"/api/gamma": function(req,resp,dev){ splitVerb(req,resp,dev,gamma); },
+	"/api/slack": function(req,resp,dev){ slack.post(req,resp,dev); },
 	"/api/status": getStatus,
 	"/api/version": getVersion,
 	"/api/patterns": function(req,resp,dev){ splitVerb(req,resp,dev,patterns); },
