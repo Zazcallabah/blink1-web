@@ -29,7 +29,7 @@ var gamma = new Gamma(blink);
 var slack = new Slack(blink);
 var tools = new Tools();
 
-var parseRequest = function(request, callback){
+var parseRequest = function(request, callback, isJson){
 	var queryData = "";
 	request.on('data', function(data) {
 		queryData += data;
@@ -42,10 +42,11 @@ var parseRequest = function(request, callback){
 	request.on('end', function() {
 		try
 		{
-			if( queryData === "" )
-				callback( true );
-			else
-				callback( JSON.parse( queryData ) );
+			if( queryData !== "" )
+			{
+				callback( isJson ? JSON.parse( queryData ) : queryData );
+			}
+			else callback();
 		} catch( e )
 		{
 			try{
@@ -59,8 +60,14 @@ var parseRequest = function(request, callback){
 	});
 };
 
-var splitVerb = function(request,response,dev,controller) {
+var splitVerb = function(request,response,dev,controller,notJson) {
 	if( request.method === 'GET' ) {
+		if( !controller.get )
+		{
+			response.writeHead( 405 );
+			response.end();
+			return;
+		}
 		controller.get(request,response,dev);
 	}
 	else if( request.method === 'POST' ) {
@@ -74,7 +81,7 @@ var splitVerb = function(request,response,dev,controller) {
 				response.writeHead(500, {"Content-Type": "text/plain"});
 				response.end();
 			}
-		});
+		}, !notJson );
 	}
 };
 
@@ -90,7 +97,7 @@ var controlAction = function( request, response, dev, action ) {
 				response.writeHead(500, {"Content-Type": "text/plain"});
 				response.end();
 			}
-		});
+		}, true);
 	}
 };
 
@@ -133,10 +140,10 @@ var getVersion = function(req,response,device){
 var apiCallMap = {
 	"/api/leds": function(req,resp,dev){ splitVerb(req,resp,dev,leds); }, 
 	"/api/gamma": function(req,resp,dev){ splitVerb(req,resp,dev,gamma); },
-	"/api/slack": function(req,resp,dev){ slack.post(req,resp,dev); },
+	"/api/slack": function(req,resp,dev){ splitVerb(req,resp,dev,slack, true); },
+	"/api/patterns": function(req,resp,dev){ splitVerb(req,resp,dev,patterns); },
 	"/api/status": getStatus,
 	"/api/version": getVersion,
-	"/api/patterns": function(req,resp,dev){ splitVerb(req,resp,dev,patterns); },
 	"/api/control/togl": function(req,resp,dev) { controlAction( req,resp,dev,"togl"); },
 	"/api/control/slowtogl": function(req,resp,dev) { controlAction( req,resp,dev,"slowTogl"); },
 	"/api/control/play": function(req,resp,dev) { controlAction( req,resp,dev,"play"); },
@@ -145,7 +152,6 @@ var apiCallMap = {
 };
 
 var requesthandler = function( request, response ) {
-
 	var pathname = url.parse( request.url ).pathname;
 	
 	if( pathname === '/' || pathname === '' )
