@@ -36,5 +36,72 @@ Tools.prototype.toColor = function(r,g,b){
 		this.hexconvert(b);
 };
 
+Tools.prototype.makeFadeArray = function (source,target,segments){
+	if( segments <= 0 )
+		throw new Error("invalid number of segments");
+	var seg = segments || 8;
+	var diff = Math.abs( source-target );
+	var step = diff / seg;
+	var direction = source < target ? 1 : -1;
+	
+	var result = [];
+	while( (direction == 1 && source < target) || (direction == -1 && source > target) )
+	{
+		source += step*direction;
+		result.push(Math.round(source));
+	}
+	return result;
+};
+
+Tools.prototype.colorFade = function(sourceColor,targetColor,segments){
+	var r = this.makeFadeArray(sourceColor.r,targetColor.r,segments);
+	var g = this.makeFadeArray(sourceColor.g,targetColor.g,segments);
+	var b = this.makeFadeArray(sourceColor.b,targetColor.b,segments);
+	var result = [];
+	for( var i = 0; i<r.length; i++ )
+	{
+		result.push({r:r[i],g:g[i],b:b[i]});
+	}
+	return result;
+};
+
+Tools.prototype.interleave = function( a, b ){
+	if( a.length !== b.length )
+		throw new Error( "arrays not equal size" );
+	var result = [];
+	for( var i = 0; i<a.length; i++ )
+	{
+		result.push(a[i]);
+		result.push(b[i]);
+	}
+	return result;
+};
+
+Tools.prototype.makePattern = function( fade1, fade2, segments, time ){
+	var speed = time / (segments*4);
+	var led1 = function(data){
+		data.led = 1;
+		data.fadeMillis = speed;
+		return data;
+	};
+	var led2 = function(data){
+		data.led = 2;
+		data.fadeMillis = speed;
+		return data;
+	};
+	var cf1 = this.colorFade( fade1.from, fade1.to, segments ).map(led1);
+	var cf2 = this.colorFade( fade2.from, fade2.to, segments ).map(led2);
+	var cf3 = this.colorFade( fade1.to, fade1.from, segments ).map(led1);
+	var cf4 = this.colorFade( fade2.to, fade2.from, segments ).map(led2);
+	
+	var up = this.interleave( cf1,cf2 );
+	var down = this.interleave( cf3,cf4 );
+	var endindex = 32;
+	var startOn = endindex - (up.length+down.length);
+	return up.concat(down).map( function(p){
+		p.lineIndex = startOn++;
+		return p;
+	});
+}
 
 module.exports = Tools;
