@@ -52,6 +52,8 @@ The npm install may need sudo. If it fails, try installing node-hid globally.
 
 ## npm install instructions
 
+Just doing an `install npm` should work on most modern dists. If you encounter trouble, try the following:
+
 Install npm
 
     sudo apt-get install npm
