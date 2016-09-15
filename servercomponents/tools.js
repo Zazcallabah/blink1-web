@@ -45,10 +45,10 @@ Tools.prototype.makeFadeArray = function (source,target,segments){
 	var direction = source < target ? 1 : -1;
 	
 	var result = [];
-	while( (direction == 1 && source < target) || (direction == -1 && source > target) )
+	for( var i = 1; i<=segments; i++ )
 	{
-		source += step*direction;
-		result.push(Math.round(source));
+		var entry = source+(i * step * direction);
+		result.push(Math.round(entry));
 	}
 	return result;
 };
