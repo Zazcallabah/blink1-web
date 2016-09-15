@@ -59,8 +59,8 @@ Control.prototype.togl = function( p, response,device ){
 				blnk.writePatternLine( patterns[i] );
 			}
 			
-			var patternEnd = 31;
-			blnk.playLoop({play: 1, start:(patternEnd - patterns.length), end: patternEnd});
+			var patternEnd = 32;
+			blnk.playLoop({play: 1, start:patternEnd - patterns.length, end: patternEnd-1});
 			response.writeHead(200);
 			response.write( "togl mode activated" );
 			response.end();
@@ -101,25 +101,50 @@ Control.prototype.slowTogl = function( p, response,device ){
 };
 
 Control.prototype.advTogl = function( p, response, device ){
+	var b1 = this.blink(0);
+	var b2 = this.blink(1);
 	var speed = p.speed || 2000;
 	var mode = p.mode || 0;
 	tools.log( "advtogl with speed "+speed );
 	this.getColorByMode( mode, function(col){
 		var segments = 8;
-		var patterns = tools.makePattern(
-			{from: col[0], to: col[1] },
-			{from: col[2], to: col[3] },
+		var patterns_a = tools.makePattern(
+			{from: col[0], to: col[2] },
+			{from: col[1], to: col[3] },
 			8,
 			speed
 		);
-		for(var i=0; i<segments; i++)
+		var patterns_b = tools.makePattern(
+			{from: col[2], to: col[0] },
+			{from: col[3], to: col[1] },
+			8,
+			speed
+		);
+		
+		for( var i = 0; i<patterns_a.length; i++ )
 		{
-			blnk.setLed({ledn:2});
-			blnk.writePatternLine(  {fadeMillis:speed, r:l1.r, g:l1.g, b:l1.b, lineIndex: startAt+(i*2)} );
-			blnk.setLed({ledn:1});
-			blnk.writePatternLine(  {fadeMillis:speed, r:l2.r, g:l2.g, b:l2.b, lineIndex: startAt +(i*2)+1} );
-
+			tools.log( "Device 0: writePatternLine {time: "+patterns_a[i].speed
+				+", ledn: "+patterns_a[i].led
+				+", color: "+tools.toColor(patterns_a[i].r,patterns_a[i].g,patterns_a[i].b)
+				+", index: "+patterns_a[i].lineIndex+"}" );
+			b1.setLed({ledn:patterns_a[i].led});
+			b1.writePatternLine( patterns_a[i] );
 		}
+		for( var i = 0; i<patterns_b.length; i++ )
+		{
+			tools.log( "Device 1: writePatternLine {time: "+patterns_b[i].speed
+				+", ledn: "+patterns_b[i].led
+				+", color: "+tools.toColor(patterns_b[i].r,patterns_b[i].g,patterns_b[i].b)
+				+", index: "+patterns_b[i].lineIndex+"}" );
+			b2.setLed({ledn:patterns_b[i].led});
+			b2.writePatternLine( patterns_b[i] );
+		}
+		var patternEnd = 32;
+		b1.playLoop({play: 1, start:patternEnd - patterns_a.length, end: patternEnd-1});
+		b2.playLoop({play: 1, start:patternEnd - patterns_b.length, end: patternEnd-1});
+		response.writeHead(200);
+		response.write( "togl mode activated" );
+		response.end();
 	});
 };
 
