@@ -146,6 +146,7 @@ var apiCallMap = {
 	"/api/version": getVersion,
 	"/api/control/togl": function(req,resp,dev) { controlAction( req,resp,dev,"togl"); },
 	"/api/control/slowtogl": function(req,resp,dev) { controlAction( req,resp,dev,"slowTogl"); },
+	"/api/control/advtogl": function(req,resp,dev) { controlAction( req,resp,dev,"advTogl"); },
 	"/api/control/play": function(req,resp,dev) { controlAction( req,resp,dev,"play"); },
 	"/api/control/persist": function(req,resp,dev) { controlAction( req,resp,dev,"persist"); },
 	"/api/control/pause": function(req,resp,dev) { controlAction( req,resp,dev,"pause"); },

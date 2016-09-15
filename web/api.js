@@ -126,22 +126,12 @@
 	};
 	
 	Api.prototype.trans = function(ms) {
-		var devices = [];
-		var tradeColors = function( ledcolors ){
-			devices.push( ledcolors );
-			if( devices.length < 2 )
-				return;
-			//		{ledA:"#000000",ledB:"#000000"}
-		// this.webreq(
-			// "POST",
-			// "/api/control/slowtogl/" + (device||0),
-			// undefined,
-			// {speed:parseInt(ms,10)}
-		// );
-
-		};
-		this.getCurrentColor(tradeColors,0)
-		this.getCurrentColor(tradeColors,1)
+		 this.webreq(
+			 "POST",
+			 "/api/control/advtogl/0",
+			 undefined,
+			 {speed:parseInt(ms,10)}
+		 );
 	};
 	function Pick( id, onchange )
 	{
