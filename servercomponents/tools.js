@@ -78,7 +78,7 @@ Tools.prototype.interleave = function( a, b ){
 };
 
 Tools.prototype.makePattern = function( fade1, fade2, segments, time ){
-	var speed = time / (segments*4);
+	var speed = Math.round(time / (segments*4));
 	var led1 = function(data){
 		data.led = 1;
 		data.fadeMillis = speed;

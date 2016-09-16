@@ -112,18 +112,21 @@ Control.prototype.advTogl = function( p, response, device ){
 			{from: col[0], to: col[2] },
 			{from: col[1], to: col[3] },
 			8,
-			speed
+			Math.round(speed/2)
 		);
 		var patterns_b = tools.makePattern(
 			{from: col[2], to: col[0] },
 			{from: col[3], to: col[1] },
 			8,
-			speed
+			Math.round(speed/2)
 		);
 		
+		var stayspeed = Math.round(speed/4)
 		for( var i = 0; i<patterns_a.length; i++ )
 		{
-			tools.log( "Device 0: writePatternLine {time: "+patterns_a[i].speed
+			if( i == 0 || i == (patterns_a.length/2-1) )
+				patterns_a[i].fadeMillis = stayspeed;
+			tools.log( "Device 0: writePatternLine {time: " + patterns_a[i].fadeMillis
 				+", ledn: "+patterns_a[i].led
 				+", color: "+tools.toColor(patterns_a[i].r,patterns_a[i].g,patterns_a[i].b)
 				+", index: "+patterns_a[i].lineIndex+"}" );
@@ -132,7 +135,9 @@ Control.prototype.advTogl = function( p, response, device ){
 		}
 		for( var i = 0; i<patterns_b.length; i++ )
 		{
-			tools.log( "Device 1: writePatternLine {time: "+patterns_b[i].speed
+			if( i == 0 || i == (patterns_b.length/2-1) )
+				patterns_b[i].fadeMillis = stayspeed;
+			tools.log( "Device 1: writePatternLine {time: "+patterns_b[i].fadeMillis
 				+", ledn: "+patterns_b[i].led
 				+", color: "+tools.toColor(patterns_b[i].r,patterns_b[i].g,patterns_b[i].b)
 				+", index: "+patterns_b[i].lineIndex+"}" );
